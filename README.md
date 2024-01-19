@@ -11,10 +11,10 @@ Our mission is to provide college students with an intuitive, tailor-made financ
 
 
 ## The Team ##
-Juliana Ho
-Devin Felix
-Zack Wong
-Garret Hammerle
-Tuan Huy Lenh
+Juliana Ho,
+Devin Felix,
+Zack Wong,
+Garret Hammerle,
+Tuan Huy Lenh,
 Mrinisha Adhikari
 
