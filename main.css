@@ -1,0 +1,36 @@
+/* Basic Styles for Hamburger Menu */
+.hamburger-menu {
+    cursor: pointer;
+    display: block;
+    width: 30px; /* Width of the button */
+    height: 25px; /* Total height of the button */
+    position: relative;
+}
+
+.hamburger-menu .bar {
+    background-color: #333; /* Color of the bars */
+    height: 3px; /* Height of each bar */
+    width: 100%; /* Width of each bar */
+    position: absolute;
+    left: 0;
+    transition: all 0.3s ease-in-out; /* Transition for the animation */
+}
+
+.hamburger-menu .bar:nth-child(1) { top: 0; }
+.hamburger-menu .bar:nth-child(2) { top: 11px; }
+.hamburger-menu .bar:nth-child(3) { top: 22px; }
+
+/* Animation Styles for Hamburger Menu */
+.hamburger-menu.active .bar:nth-child(1) {
+    top: 11px;
+    transform: rotate(135deg);
+}
+
+.hamburger-menu.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active .bar:nth-child(3) {
+    top: 11px;
+    transform: rotate(-135deg);
+}
