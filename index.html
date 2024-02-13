@@ -1,62 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <link rel="stylesheet" href="main.css" />
-    <title>Scotty Finance: Budget Calculator</title>
-</head>
-<body>
-
-<!-- Header -->
-<header id="header" class="alt">
-    <h1><a href="index.html">ScottyFinance</a></h1>
-    <nav>
-        <a href="#menu">Menu</a>
-    </nav>
-</header>
-
-<!-- Hamburger Button -->
-<div class="hamburger-menu">
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-</div>
-
-<script>
-    document.querySelector('.hamburger-menu').addEventListener('click', function() {
-        this.classList.toggle('active');
-    });
-</script>
-
-
-<!-- Banner -->
-<section id="banner">
-    <div class="inner">
-        <img src="images\Scotty Finance-logos_transparent.png" alt="logo" width="250" height="160">
-        <h2>Scotty Finance</h2>
-        <p>Your Personal Budgeting Co-Pilot</p>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Scotty Finance | Home</title>
+  </head>
+  <body>
+    <div class="dropdown" style="float: right;">
+      <button class="dropbtn">Menu</button>
+      <div class="dropdown-content">
+        <a href="#">Sign In</a>
+        <a href="#">Profile</a>
+        <a href="AboutUs.html">About Us</a>
+      </div>
     </div>
-</section>
+    <div class="intro">
+      <img src="images\Scotty Finance-logos_white.png" alt="logo" class="logo" />
+      <h3 class="line"><em>Your personal budgeting co-pilot</em></h3>
+      <a href="#page"><img src="images/scrollDown.png" alt="down arrow" class="down" /></a></nav></br>
+    </div>
 
-<form id="budgetCalculator">
-    <label for="textbooks">Textbook Expense:</label>
-    <input type="number" id="textbooks" name="textbooks"><br><br>
+   <center> 
+    <div id="page">
+    </br>
+      <p>Hello there! Here are some money moves tips:.......</p></br></br></br><hr style="width: 500px;"></hr></br></br></br>
+      
+        <form id="budgetCalculator">
+          <label for="textbooks">Textbook Expense:</label>
+          <input type="number" id="textbooks" name="textbooks"><br><br>
+      
+          <label for="transportation">Transportation:</label>
+          <input type="number" id="transportation" name="transportation"><br><br>
+      
+          <label for="tuition">Tuition:</label>
+          <input type="number" id="tuition" name="tuition"><br><br>
+      
+          <label for="savingsGoal">Savings Goal:</label>
+          <input type="number" id="savingsGoal" name="savingsGoal"><br><br>
+      
+          <input type="submit" value="Submit">
+       </form>
+       <script src="budgetCalculator.js"></script>
+    </div>
+   </center>
 
-    <label for="transportation">Transportation:</label>
-    <input type="number" id="transportation" name="transportation"><br><br>
-
-    <label for="tuition">Tuition:</label>
-    <input type="number" id="tuition" name="tuition"><br><br>
-
-    <label for="savingsGoal">Savings Goal:</label>
-    <input type="number" id="savingsGoal" name="savingsGoal"><br><br>
-
-    <input type="submit" value="Submit">
-</form>
-
-<script src="budgetCalculator.js"></script>
-
-</body>
+  </body>
 </html>
