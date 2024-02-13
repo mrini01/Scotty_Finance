@@ -1,0 +1,12 @@
+.stats
+{
+  font-weight: bold;
+}
+
+#graph {
+    width: 600px;
+    height: 400px;
+    background-color: whitesmoke;
+    color: black;
+    margin: auto;
+}
