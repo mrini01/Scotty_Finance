@@ -134,6 +134,7 @@ var pieData = budgetData.map(d => ({ category: d.category, amount: d.amount }));
 // Define variables for the pie chart slices
 var pie = d3.pie().value(d => d.amount).sort(null)
 var arc = d3.arc().innerRadius(0).outerRadius(radius*.8)
+var hoverArc = d3.arc().innerRadius(0).outerRadius(radius * 0.9)
 
 var temp = svgPie.selectAll('.arc')
     .data(pie(pieData))
@@ -147,3 +148,15 @@ temp.append('path')
     .style('fill-opacity', 0.8)
     .style('stroke', '#11141C')
     .style('stroke-width', 4)
+    .on('mouseover', function(d, i) {
+        d3.select(this)
+        .style('fill-opacity', 1)
+        .transition().duration(500)
+        .attr('d', hoverArc)
+    })
+    .on('mouseout', function(d, i) {
+        d3.select(this)
+        .style('fill-opacity', .8)
+        .transition().duration(500)
+        .attr('d', arc)
+    })
