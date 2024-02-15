@@ -10,13 +10,15 @@
     <h1 id="title">
         Budget Report
     </h1>
-
+ 
     <div class="stats" id="amount_used_label">Amount Used: $<span id="amount_used_value">0</span></div>
     <div class="stats" id="remaining_fund_label">Remaining Fund: $<span id="remaining_fund_value">0</span></div>
     <div class="stats" id="out_of_pocket_label">Out of Pocket: $<span id="out_of_pocket_value">0</span></div>
     
-    <div id="graph"></div>
+    <div id="bargraph" class="chart-container"></div>
+    <div id="piegraph" class="chart-container"></div>
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="budget-report.js"></script>
     
 </body>

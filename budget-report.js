@@ -1,5 +1,7 @@
 // Referenced these sources to learn how to use d3.js
 // https://d3-graph-gallery.com/barplot
+// https://d3-graph-gallery.com/graph/pie_annotation.html
+// https://www.youtube.com/watch?v=fX9uiqSok6k
 
 
 // Manually setting the amounts for now 
@@ -35,22 +37,24 @@ setAmountUsed(amount_used);
 setRemaingFund(remaining_fund);
 setOutOfPocket(out_of_pocket);
 
-// Get the graph element from budget-report.html in order to get the css info
-var graph = document.getElementById('graph')
-var graphstyle = window.getComputedStyle(graph)
+// BAR GRAPH CODE
+
+// Get the Bar graph element from budget-report.html in order to get the css info
+var barGraph = document.getElementById('bargraph')
+var barGraphstyle = window.getComputedStyle(barGraph)
 
 // Margins of the graph
 var margins = {top: 30, bottom: 30, right: 30, left: 30}
 
 // Get the graph width and height from css file and adjust to margins
-var graphWidth = parseInt(graphstyle.getPropertyValue('width')) - margins.left - margins.right;
-var graphHeight = parseInt(graphstyle.getPropertyValue('height')) - margins.top - margins.bottom;
+var barGraphWidth = parseInt(barGraphstyle.getPropertyValue('width')) - margins.left - margins.right;
+var barGraphHeight = parseInt(barGraphstyle.getPropertyValue('height')) - margins.top - margins.bottom;
 
 // Append svg to our #graph variable that we set in budget-report.html
-var svg = d3.select('#graph')
+var svg = d3.select('#bargraph')
     .append('svg')
-    .attr('width', graphWidth + margins.left + margins.right)
-    .attr('height', graphHeight + margins.top + margins.bottom)
+    .attr('width', barGraphWidth + margins.left + margins.right)
+    .attr('height', barGraphHeight + margins.top + margins.bottom)
     // create a group element for the axis labels and text
     .append('g')
     .attr('transform', 'translate(' + margins.left + "," + margins.top + ")");
@@ -58,17 +62,17 @@ var svg = d3.select('#graph')
 // Create a scale for the x axis on the graph
 const x = d3.scaleBand()
   .domain(budgetData.map(data => data.category))
-  .range([0, graphWidth])
+  .range([0, barGraphWidth])
   .padding(0.1);
 
 // Positions the x axis and labels on the graph 
 var xAxis = svg.append("g")
-  .attr("transform", "translate(0," + graphHeight + ")");
+  .attr("transform", "translate(0," + barGraphHeight + ")");
 
 // Create a scale for the y axis on the graph
 const y = d3.scaleLinear()
   .domain([0, d3.max(budgetData, data => data.amount)])
-  .range([graphHeight, 0]);
+  .range([barGraphHeight, 0]);
 
 // Positions the y axis and labels on the graph
 var yAxis = svg.append("g")
@@ -93,4 +97,53 @@ svg.selectAll(".bar")
     .attr("x", data => x(data.category)) // Set x data to the budgetData categories
     .attr("y", data => y(data.amount)) // Set y data to the budgetData amounts for each category
     .attr("width", x.bandwidth())
-    .attr("height", data => graphHeight - y(data.amount));
+    .attr("height", data => barGraphHeight - y(data.amount));
+
+
+// PIE CHART CODE
+
+// Get the Pie chart element from budget-report.html in order to get the css info
+var pieChart = document.getElementById('piegraph')
+var pieChartStyle = window.getComputedStyle(pieChart)
+
+// Get the pie graph width and height from css file and adjust to margins
+var pieChartWidth = parseInt(pieChartStyle.getPropertyValue('width'));
+var pieChartHeight = parseInt(pieChartStyle.getPropertyValue('height'));
+
+// Colors of pie chart
+// var colors = d3.scaleOrdinal(['#7326AB', '#2A59A9', '#E5A1D4']) // Manually set colors
+// Use color scheme to automatically assign colors
+var colors = d3.scaleOrdinal()
+  .domain(budgetData)
+  .range(d3.schemeDark2)
+
+// Get the radius by getting the minimum between width and height and diving by 2
+var radius = Math.min(pieChartWidth, pieChartHeight) / 2;
+
+// Append svg to our #piegraph variable that we set in budget-report.html
+var svgPie = d3.select('#piegraph')
+    .append('svg')
+    .attr('width', pieChartWidth)
+    .attr('height', pieChartHeight)
+    .append('g')
+    .attr('transform', `translate(${pieChartWidth / 2}, ${pieChartHeight / 2})`); // set position to center of graph
+
+// map the budgetdata to to a new variable
+var pieData = budgetData.map(d => ({ category: d.category, amount: d.amount }));
+
+// Define variables for the pie chart slices
+var pie = d3.pie().value(d => d.amount).sort(null)
+var arc = d3.arc().innerRadius(0).outerRadius(radius*.8)
+
+var temp = svgPie.selectAll('.arc')
+    .data(pie(pieData))
+    .enter().append('g')
+    .attr('class', 'arc')
+
+temp.append('path')
+    .attr('d', arc)
+    .attr('class', 'arc')
+    .style('fill', (d, i) => colors(i))
+    .style('fill-opacity', 0.8)
+    .style('stroke', '#11141C')
+    .style('stroke-width', 4)
