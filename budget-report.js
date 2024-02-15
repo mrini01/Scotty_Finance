@@ -136,11 +136,13 @@ var pie = d3.pie().value(d => d.amount).sort(null)
 var arc = d3.arc().innerRadius(0).outerRadius(radius*.8)
 var hoverArc = d3.arc().innerRadius(0).outerRadius(radius * 0.9)
 
+// set up pie chart
 var temp = svgPie.selectAll('.arc')
     .data(pie(pieData))
     .enter().append('g')
     .attr('class', 'arc')
 
+// Renders slices for pie chart
 temp.append('path')
     .attr('d', arc)
     .attr('class', 'arc')
@@ -160,3 +162,12 @@ temp.append('path')
         .transition().duration(500)
         .attr('d', arc)
     })
+
+// Added labels to pie chart
+temp.append('text')
+    .text(d => `${d.data.category} ${d.data.amount}`)
+    .attr('transform', d => `translate(${arc.centroid(d)})`)
+    .style('font-size', 14)
+    .style('font-weight', 800)
+    .style('fill', '#FFFFFF')
+    .style('text-anchor', 'middle')
