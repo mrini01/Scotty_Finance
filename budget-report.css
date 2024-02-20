@@ -1,12 +1,39 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather:300,700,300italic,700italic|Source+Sans+Pro:900');
+body{
+    background-color: #2D6CC0;
+    background-image: url(../images/bg.png);
+    flex-direction: column;
+    font-family: Merriweather;
+}
+
 .stats
 {
   font-weight: bold;
 }
 
-#graph {
+#bargraph {
     width: 600px;
     height: 400px;
-    background-color: whitesmoke;
+    background-color: transparent;
     color: black;
     margin: auto;
+}
+
+#piegraph {
+    width: 600px;
+    height: 400px;
+    background-color: transparent;
+    color: white;
+    margin: auto;
+}
+
+.graphs-container {
+    display: flex;
+    justify-content: center;
+}
+
+.chart-container {
+    width: 45%; /* Adjust the width as needed */
+    margin-right: 20px; /* Adjust the margin between charts */
+    text-align: center; /* Center the inline-block elements */
 }

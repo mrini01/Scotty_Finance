@@ -97,7 +97,17 @@ svg.selectAll(".bar")
     .attr("x", data => x(data.category)) // Set x data to the budgetData categories
     .attr("y", data => y(data.amount)) // Set y data to the budgetData amounts for each category
     .attr("width", x.bandwidth())
-    .attr("height", data => barGraphHeight - y(data.amount));
+    .attr("height", data => barGraphHeight - y(data.amount))
+    .on('mouseover', function(d, i) {
+        d3.select(this)
+        .style('fill', '#1b8f5b')
+        .transition().duration(500)  
+    })
+    .on('mouseout', function(d, i) {
+        d3.select(this)
+        .style("fill", "#24b574")
+        .transition().duration(500)
+    })
 
 
 // PIE CHART CODE
