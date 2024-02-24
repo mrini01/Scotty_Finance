@@ -136,6 +136,6 @@ html{
 }
 
 .season-names p {
-    margin-right: 40px; /* Adjust the spacing between season names */
+    margin-right: 45px; /* Adjust the spacing between season names */
     cursor: pointer;
 }
