@@ -1,4 +1,5 @@
 SELECT * FROM users;
 SELECT * FROM budgets;
 SELECT * FROM expenses;
-SELECT * FROM earnings;
+SELECT * FROM incomes;
+SELECT * FROM savings;

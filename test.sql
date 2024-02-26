@@ -18,8 +18,13 @@ VALUES ('1', '300', 2),
        ('2', '12', 1),
        ('3', '500', 5);
 	
-INSERT INTO earnings (budgetId, amount, type)
+INSERT INTO incomes (budgetId, amount, type)
 VALUES ('1', '500', 1),
 	   ('1', '400', 3),
        ('2', '50', 4),
        ('3', '300', 5);
+
+INSERT INTO savings (budgetId, amount)
+VALUES ('1', '1000'),
+	   ('2', '500'),
+       ('3', '750');

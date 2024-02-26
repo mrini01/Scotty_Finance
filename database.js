@@ -7,7 +7,8 @@ import dotenv from 'dotenv'
 export const Quarter = {
     Fall: 'fall',
     Winter: 'winter',
-    Spring: 'spring'
+    Spring: 'spring',
+    Summer: 'summer'
 }
 
 export const ExpenseType = {
@@ -19,34 +20,57 @@ export const ExpenseType = {
     5: 'transportation'
 }
 
-export const EarningType = {
+export const IncomeType = {
     0: 'unassigned',
     1: 'grant',
     2: 'loan',
     3: 'wages',
-    4: 'family',
-    5: 'savings'
+    4: 'family'
 }
 
 // .env file import, using this so that database password and host ip address aren't in vcs
 dotenv.config();
+
+let databaseExists = true;
 
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE
-}).promise();
+});
+
+pool.getConnection((err,connection)=> {
+    if(err) {
+        console.log("AAAAHHHHH");
+        databaseExists = false;
+    }
+    if (connection) {
+        console.log("database connected successfully!!");
+        connection.release();
+    }
+    });
 
 //  -------- user stuff, account stuff --------------
-export async function getUsers() {
-    const result = await pool.query("SELECT * FROM users");
+/**
+ * get a list of all users
+ * @returns list of all users, each element is a User object with fields username, pass, and id
+ */
+export function getUsers() {
+    if (!databaseExists) return undefined
+    const result = pool.query("SELECT * FROM users");
     const rows = result[0];
     return rows;
 }
 
-export async function getUser(userId) {
-    const [rows] = await pool.query(`
+/**
+ * get a specific user with that user's id
+ * @param {number} userId 
+ * @returns User object with fields username, pass, and id
+ */
+export function getUser(userId) {
+    if (!databaseExists) return undefined
+    const [rows] = pool.query(`
     SELECT * 
     FROM users
     WHERE id = ?
@@ -54,8 +78,14 @@ export async function getUser(userId) {
     return rows;
 }
 
-export async function getUserWithUsername(username) {
-    const [rows] = await pool.query(`
+/**
+ * get the User object for user with username username
+ * @param {string} username 
+ * @returns User object, with fields username, pass, and id
+ */
+export function getUserWithUsername(username) {
+    if (!databaseExists) return undefined
+    const [rows] = pool.query(`
     SELECT *
     FROM users
     WHERE username=?
@@ -63,8 +93,15 @@ export async function getUserWithUsername(username) {
     return rows;
 }
 
-export async function userExists(username, password) {
-    const [rows] = await pool.query(`
+/**
+ * check if the user with the given username and password exists in the database.
+ * @param {string} username 
+ * @param {string} password 
+ * @returns the id of the User if it exists, or undefined if it does not exist
+ */
+export function userExists(username, password) {
+    if (!databaseExists) return undefined
+    const [rows] = pool.query(`
     SELECT *
     FROM users
     WHERE username=? AND pass=?
@@ -73,8 +110,15 @@ export async function userExists(username, password) {
     return rows[0].id;
 }
 
-export async function createUser(username, pass) {
-    const result = await pool.query(`
+/**
+ * create a new user in the database
+ * @param {string} username 
+ * @param {string} pass 
+ * @returns struct with fields id, username, and pass
+ */
+export function createUser(username, pass) {
+    if (!databaseExists) return undefined
+    const result = pool.query(`
     INSERT INTO users (username, pass)
     VALUES (?, ?)
     `, [username, pass]);
@@ -85,13 +129,20 @@ export async function createUser(username, pass) {
     };
 }
 
-export async function removeUser(userId) {
-    const item = await pool.query(`
+/**
+ * remove the user in the database with the specified id. if it doesn't exist, nothing happens
+ * @param {number} userId 
+ * @returns struct with fields id, username, pass of the user which got deleted. if it doesn't exists, returns undefined.
+ */
+export function removeUser(userId) {
+    if (!databaseExists) return undefined
+    const item = pool.query(`
     SELECT *
     FROM users
     WHERE id = ?
     `, [userId]);
-    const result = await pool.query(`
+    if (item[0] == undefined) return undefined;
+    const result = pool.query(`
     DELETE FROM users WHERE id=?
     `, [userId]);
     return {
@@ -108,9 +159,9 @@ export async function removeUser(userId) {
  * @param {number} budgetId
  * @returns budget row, or undefined if it does not exist
  * */ 
-export async function getBudget(budgetId) {
-    
-    const [rows] = await pool.query(`
+export function getBudget(budgetId) {
+    if (!databaseExists) return undefined
+    const [rows] = pool.query(`
     SELECT *
     FROM budgets
     WHERE id=?
@@ -125,8 +176,9 @@ export async function getBudget(budgetId) {
  * @param {number} year 
  * @returns budget row with the specified quarter and year, or undefined if it does not exist
  */
-export async function getBudgetForUserId(userId, quarter, year) {
-    const [rows] = await pool.query(`
+export function getBudgetForUserId(userId, quarter, year) {
+    if (!databaseExists) return undefined
+    const [rows] = pool.query(`
     SELECT * 
     FROM budgets
     WHERE userId=? AND quarter=? AND year=?
@@ -139,8 +191,9 @@ export async function getBudgetForUserId(userId, quarter, year) {
  * @param {number} userId 
  * @returns budget row(s) that the user userId owns
  */
-export async function getAllBudgetsForUserId(userId) {
-    const [rows] = await pool.query(`
+export function getAllBudgetsForUserId(userId) {
+    if (!databaseExists) return undefined
+    const [rows] = pool.query(`
     SELECT *
     FROM budgets
     WHERE userId=?
@@ -155,8 +208,9 @@ export async function getAllBudgetsForUserId(userId) {
  * @param {number} year 
  * @returns array of budget id, quarter, year
  */
-export async function createBudget(userId, quarter, year)  {
-    const result = await pool.query(`
+export function createBudget(userId, quarter, year)  {
+    if (!databaseExists) return undefined
+    const result = pool.query(`
     INSERT INTO
     budgets (userId, quarter, year)
     VALUES (?, ?, ?)
@@ -168,15 +222,16 @@ export async function createBudget(userId, quarter, year)  {
     };
 }
 
-// const l = await createBudget(1, Quarters.Winter, '2024');
-// console.log(l);
-
 // -------- expense stuff, consider this part of budget stuff --------
 
-// returns array of expenses, each expense is an array of id, budgetId, amount, type
-// use getBudgetForUserId to get the budget for a user
-export async function getExpenses(budgetId) {
-    const expenses = await pool.query(`
+/**
+ * get a list of all Expenses for budget with id budgetId
+ * @param {number} budgetId 
+ * @returns list of Expenses. each element is a struct with fields id, amount, and type
+ */
+export function getExpenses(budgetId) {
+    if (!databaseExists) return undefined
+    const expenses = pool.query(`
     SELECT * 
     FROM expenses
     WHERE budgetId = ?
@@ -185,14 +240,15 @@ export async function getExpenses(budgetId) {
 }
 
 /**
- * 
+ * create expense for the budget with budgetId, with amount amount and type type
  * @param {number} budgetId 
  * @param {number} amount 
  * @param {ExpenseType} type 
- * @returns 
+ * @returns the Expense that was created (struct contiaining id, amount, and type)
  */
-export async function createExpense(budgetId, amount, type) {
-    const expense = await pool.query(`
+export function createExpense(budgetId, amount, type) {
+    if (!databaseExists) return undefined
+    const expense = pool.query(`
     INSERT
     INTO expenses (budgetId, amount, type)
     VALUES (?, ?, ?)
@@ -204,31 +260,75 @@ export async function createExpense(budgetId, amount, type) {
     };
 }
 
-export async function getEarnings(budgetId) {
-    const earnings = await pool.query(`
+/**
+ * get a list of all Incomes for budget with id budgetId
+ * @param {number} budgetId id of the budget
+ * @returns a list of all Incomes for that budget. each Income is a struct with fields id, amount, and type
+ */
+export function getIncomes(budgetId) {
+    if (!databaseExists) return undefined
+    const incomes = pool.query(`
     SELECT *
-    FROM earnings
+    FROM incomes
     WHERE budgetId = ?
     `, [budgetId]);
-    return earnings[0];
+    return incomes[0];
 }
 
 /**
- * 
- * @param {number} budgetId 
- * @param {number} amount 
- * @param {EarningType} type 
- * @returns 
+ * create Income for budget with id budgetId, with amount amount and type type
+ * @param {number} budgetId id of the budget this income is for
+ * @param {number} amount money amount for the income
+ * @param {IncomeType} type 0: 'unassigned', 1: 'grant', 2: 'loan', 3: 'wages', 4: 'family'
+ * @returns struct with id, amount, and type of the Income that was created
  */
-export async function createEarning(budgetId, amount, type) {
-    const earning = await pool.query(`
+export function createIncome(budgetId, amount, type) {
+    if (!databaseExists) return undefined
+    const income = pool.query(`
     INSERT
-    INTO earnings (budgetId, amount, type)
+    INTO incomes (budgetId, amount, type)
     VALUES (?, ?, ?)
     `, [budgetId, amount, type]);
     return {
-        'id': expense[0].insertId,
+        'id': income[0].insertId,
         'amount': amount,
         'type': type
     };
 }
+
+/**
+ * create a Savings for budget
+ * @param {number} budgetId id of the budget
+ * @param {number} amount savings amount
+ * @returns Savings object that contains the id of the savings that was inserted, and the amount
+ */
+export function createSavings(budgetId, amount) {
+    if (!databaseExists) return undefined
+    const savings = pool.query(`
+    INSERT
+    INTO savings (budgetId, amount)
+    VALUES(?, ?)
+    `, [budgetId, amount])
+    return {
+        'id': savings[0].insertId,
+        'amount': amount
+    }
+}
+
+/**
+ * update the savings amount to amount. (please only create one savings for each budget, and update it as the savings changes)
+ * @param {number} budgetId id of the budget
+ * @param {number} amount numerical amount to update to
+ */
+export function updateSavings(budgetId, amount) {
+    if (!databaseExists) return undefined
+    const result = pool.query(`
+    SELECT
+    FROM 
+    `)
+}
+
+// EXPENSE INCOME AND SAVINGS
+// savings goal
+// 
+
