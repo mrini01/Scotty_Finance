@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css" />
+  <title>Scotty Finance | Home</title>
+</head>
+<body>
+  <div class="dropdown" style="float: right;">
+    <button class="dropbtn">Menu</button>
+    <div class="dropdown-content">
+      <a href="#">Sign In</a>
+      <a href="#">Profile</a>
+      <a href="quarter.html">Quarter Reports</a>
+      <a href="AboutUs.html">About Us</a>
+    </div>
+  </div>
+  <div class="intro">
+    <img src="images\Scotty Finance-logos_white.png" alt="logo" class="logo" />
+    <h3 class="line"><em>Your personal budgeting co-pilot</em></h3>
+    <a href="#page"><img src="images/scrollDown.png" alt="down arrow" class="down" /></a></br>
+  </div>
+
+  <center> 
+    <div id="page">
+      </br>
+      <p>Please choose one of these quarters</p>
+
+      <div class="season-names">
+        <p onclick="showForm('summer')">Summer</p>
+        <p onclick="showForm('fall')">Fall</p>
+        <p onclick="showForm('winter')">Winter</p>
+        <p onclick="showForm('spring')">Spring</p>
+      </div>
+
+    </br><hr style="width: 500px;"></hr></br></br></br>
+
+      <div id="summer-form" class="season-form">
+        <form>
+          <label for="textbooks-summer">Textbook Expense:</label>
+          <input type="number" id="textbooks-summer" name="textbooks" value="100"><br><br>
+      
+          <label for="transportation-summer">Transportation:</label>
+          <input type="number" id="transportation-summer" name="transportation"value="80"><br><br>
+      
+          <label for="tuition-summer">Tuition:</label>
+          <input type="number" id="tuition-summer" name="tuition" value="3000"><br><br>
+      
+          <label for="savingsGoal-summer">Savings Goal:</label>
+          <input type="number" id="savingsGoal-summer" name="savingsGoal" value="500"><br><br>
+      
+          <input type="submit" value="Submit">
+        </form>
+        <script src="budgetCalculator.js"></script>
+      </div>
+
+      <div id="fall-form" class="season-form">
+        <form>
+          <label for="textbooks-fall">Textbook Expense:</label>
+          <input type="number" id="textbooks-fall" name="textbooks" value="150"><br><br>
+      
+          <label for="transportation-fall">Transportation:</label>
+          <input type="number" id="transportation-fall" name="transportation" value="100"><br><br>
+      
+          <label for="tuition-fall">Tuition:</label>
+          <input type="number" id="tuition-fall" name="tuition" value="3000"><br><br>
+      
+          <label for="savingsGoal-fall">Savings Goal:</label>
+          <input type="number" id="savingsGoal-fall" name="savingsGoal" value="500"><br><br>
+      
+          <input type="submit" value="Submit">
+        </form>
+        <script src="budgetCalculator.js"></script>
+      </div>
+      
+      <div id="winter-form" class="season-form">
+        <form>
+          <label for="textbooks-winter">Textbook Expense:</label>
+          <input type="number" id="textbooks-winter" name="textbooks"><br><br>
+      
+          <label for="transportation-winter">Transportation:</label>
+          <input type="number" id="transportation-winter" name="transportation"><br><br>
+      
+          <label for="tuition-winter">Tuition:</label>
+          <input type="number" id="tuition-winter" name="tuition"><br><br>
+      
+          <label for="savingsGoal-winter">Savings Goal:</label>
+          <input type="number" id="savingsGoal-winter" name="savingsGoal"><br><br>
+      
+          <input type="submit" value="Submit">
+        </form>
+        <script src="budgetCalculator.js"></script>
+      </div>
+      
+      <div id="spring-form" class="season-form">
+        <form>
+          <label for="textbooks-spring">Textbook Expense:</label>
+          <input type="number" id="textbooks-spring" name="textbooks" value="120"><br><br>
+      
+          <label for="transportation-spring">Transportation:</label>
+          <input type="number" id="transportation-spring" name="transportation" value="90"><br><br>
+      
+          <label for="tuition-spring">Tuition:</label>
+          <input type="number" id="tuition-spring" name="tuition" value="3000"><br><br>
+      
+          <label for="savingsGoal-spring">Savings Goal:</label>
+          <input type="number" id="savingsGoal-spring" name="savingsGoal" value="500"><br><br>
+      
+          <input type="submit" value="Submit">
+        </form>
+        <script src="budgetCalculator.js"></script>
+      </div>
+    </div>
+  </center>
+
+  <script>
+    function showForm(season) {
+      // Hide all forms
+      var forms = document.getElementsByClassName("season-form");
+      for (var i = 0; i < forms.length; i++) {
+        forms[i].style.display = "none";
+      }
+
+      // Show the selected form
+      document.getElementById(season + "-form").style.display = "flex";
+    }
+  </script>
+</body>
+</html>
