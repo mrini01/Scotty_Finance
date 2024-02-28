@@ -1,0 +1,22 @@
+{
+  "name": "scotty_finance",
+  "version": "1.0.0",
+  "description": "We are a dynamic team of college students, each bringing unique skills and perspectives, united by our passion for technology and financial empowerment!",
+  "main": "database.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.2",
+    "express": "^4.18.2",
+    "mysql2": "^3.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
