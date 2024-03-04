@@ -40,6 +40,7 @@ const pool = mysql.createPool({
     database: process.env.MYSQL_DATABASE
 });
 
+// check if database exists on localhost, if databaseExists is false, EVERY FUNCTION CALL IN THIS FILE WILL RETURN UNDEFINED
 pool.getConnection((err,connection)=> {
     if(err) {
         console.log("AAAAHHHHH");
