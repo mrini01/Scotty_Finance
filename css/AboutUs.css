@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather:300,700,300italic,700italic|Source+Sans+Pro:900');
 /* Style the page content */
 body
 {
-  font-family: Arial, sans-serif;
-  background-color: #f2f2f2; 
+    background-color: #2D6CC0;
+    background-image: url(../images/bg.png);
+    font-family: Merriweather;
 }
  /* Page header */
 #title
@@ -33,18 +35,19 @@ body
 
 /* Team member sections */
 section {
-  background-color: #fff;
+  background-color: transparent;
   padding: 20px;
   width: 200px;
   margin: 20px auto;
-  border: 1px solid #ccc; 
+  border: 2px solid #070404; 
   text-align: center; 
+  position: relative;
 }
  /* Images */ 
 img
 {
   border-radius: 50%; 
-  border: 5px solid #0077b6;
+  border: 2px solid #080303;
 }
  /* Section inner div */
 .inner {
