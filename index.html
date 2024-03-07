@@ -1,62 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <link rel="stylesheet" href="main.css" />
-    <title>Scotty Finance: Budget Calculator</title>
-</head>
-<body>
-
-<!-- Header -->
-<header id="header" class="alt">
-    <h1><a href="index.html">ScottyFinance</a></h1>
-    <nav>
-        <a href="#menu">Menu</a>
-    </nav>
-</header>
-
-<!-- Hamburger Button -->
-<div class="hamburger-menu">
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-</div>
-
-<script>
-    document.querySelector('.hamburger-menu').addEventListener('click', function() {
-        this.classList.toggle('active');
-    });
-</script>
-
-
-<!-- Banner -->
-<section id="banner">
-    <div class="inner">
-        <img src="images\Scotty Finance-logos_transparent.png" alt="logo" width="250" height="160">
-        <h2>Scotty Finance</h2>
-        <p>Your Personal Budgeting Co-Pilot</p>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Scotty Finance | Home</title>
+  </head>
+  <body>
+    <div class="dropdown" style="float: right;">
+      <button class="dropbtn">Menu</button>
+      <div class="dropdown-content">
+        <a href="sign-in.html">Sign In</a>
+        <a href="fall.html">Profile</a>
+        <a href="index.html">Home</a>
+        <a href="AboutUs.html">About Us</a>
+      </div>
     </div>
-</section>
+    <div class="animatedIntro animatedFadeInUp fadeInUp">
+      <img src="images\Scotty Finance-logos_white.png" alt="logo" class="logo" />
+      <h3 class="line"><em>Your personal budgeting co-pilot</em></h3>
+      <a href="#page"><img src="images/scrollDown.png" alt="down arrow" class="down" /></a></nav></br>
+    </div>
 
-<form id="budgetCalculator">
-    <label for="textbooks">Textbook Expense:</label>
-    <input type="number" id="textbooks" name="textbooks"><br><br>
+   <center> 
+    <div id="page">
+    </br>
+      <p> Managing and budgeting money effectively is a crucial skill for students navigating their way through their academic and personal lives. 
+        It involves understanding your income, tracking your expenses, and planning how to use your financial resources wisely. By setting clear 
+        financial goals and creating a realistic budget, students can avoid debt, save for future needs, and make the most out of their limited 
+        resources. </p>
+        
+      <p> Budgeting not only helps in managing daily expenses but also prepares students for financial success after graduation. It teaches valuable 
+        lessons in financial discipline, saving, and investing in one's future. With the right tools and a bit of planning, managing money becomes 
+        less daunting and more of an empowering activity that contributes to overall personal growth and stability.</p>
+      <p>Please use our quick maths calculator down below for a starter, to get a full version Sign-Up with a free account and head on over to your very own profile page!</p>
+     <hr style="width: 700px;"></hr></br>
+       <h3> Quick Maths Calculator </h3>
+        <form id="budgetCalculator">
+          <label for="textbooks">Personal Expenses:</label>
+          <input type="number" id="textbooks" name="textbooks"><br><br>
+      
+          <label for="transportation">Transportation:</label>
+          <input type="number" id="transportation" name="transportation"><br><br>
+      
+          <label for="tuition">Tuition:</label>
+          <input type="number" id="tuition" name="tuition"><br><br>
 
-    <label for="transportation">Transportation:</label>
-    <input type="number" id="transportation" name="transportation"><br><br>
+          <label for="income">Income:</label>
+          <input type="number" id="income" name="income"><br><br>
+      
+          <label for="savingsGoal">Savings Goal:</label>
+          <input type="number" id="savingsGoal" name="savingsGoal"><br><br>
+      
+          <input type="submit" value="Submit">
+       </form>
+       <script src="budgetCalculator.js"></script>
+    </div>
 
-    <label for="tuition">Tuition:</label>
-    <input type="number" id="tuition" name="tuition"><br><br>
+    <p>© Scotty Finance | All Rights Reserved</p>
+   </center>
 
-    <label for="savingsGoal">Savings Goal:</label>
-    <input type="number" id="savingsGoal" name="savingsGoal"><br><br>
 
-    <input type="submit" value="Submit">
-</form>
-
-<script src="budgetCalculator.js"></script>
-
-</body>
+  </body>
 </html>
