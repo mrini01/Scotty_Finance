@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather:300,700,300italic,700italic|Source+Sans+Pro:900');
+body{
+    background-color: #2D6CC0;
+    background-image: url(../images/bg.png);
+    display: flex;
+    flex-direction: column;
+    font-family: Merriweather;
+}
+
+@keyframes fadeInUp{
+  from {
+      transform: translate3d(0,40px,0)
+  }
+
+  to {
+      transform: translate3d(0,0,0);
+      opacity: 1
+  }
+}
+
+@-webkit-keyframes fadeInUp{
+  from {
+      transform: translate3d(0,40px,0)
+  }
+
+  to {
+      transform: translate3d(0,0,0);
+      opacity: 1
+  }
+}
+
+.animatedIntro{
+  display:block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100vh;
+  animation-duration: 3s;
+  animation-fill-mode: both;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-fill-mode: both
+}
+
+.animatedFadeInUp{
+  opacity: 0
+}
+
+.fadeInUp{
+  opacity: 0;
+  animation-name: fadeInUp;
+  -webkit-animation-name: fadeInUp;
+}
+
+.logo{
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: -95px;
+    width: 450px;
+    height: 450px;
+}
+
+.down{
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+    width: 70px;
+    height: 70px;
+}
+
+h3{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0px;
+    margin-bottom: 30px;
+    color: #003066;
+    font-weight: 700;
+    font-size: 20px;
+    text-align: center;
+}
+
+.page{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+	  z-index: 2;
+    text-align: initial;
+}
+
+div#page{
+    margin-top: 10px;
+    background-color: blanchedalmond;
+    width: 90%;
+    height: 100vh;
+    color: black;
+}
+
+html{
+    scroll-behavior: smooth;
+}
+
+.dropbtn{
+    position: absolute;
+    float: right;
+    background-color: #fcf071c1;
+    color: black;
+    padding: 14px;
+    font-family: Merriweather;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 12px;
+    border: #f9f9f9;
+    cursor: pointer;
+    right: 0;
+  }
+  
+  .dropdown{
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content{
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #fcf071a1;
+    border-radius: 12px;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  .dropdown-content a{
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    font-family: Merriweather;
+    font-weight: 400;
+    text-align: center;
+    display: block;
+  }
+  
+  .dropdown-content a:hover{
+    background-color: #fcf071a1;
+    
+  }
+  
+  .dropdown:hover .dropdown-content{
+    display: block;
+    margin-top: 47px;
+  }
+  
+  .dropdown:hover .dropbtn{
+    background-color: #3e8e41;
+  }
+  

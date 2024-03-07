@@ -2,7 +2,7 @@
   "name": "scotty_finance",
   "version": "1.0.0",
   "description": "We are a dynamic team of college students, each bringing unique skills and perspectives, united by our passion for technology and financial empowerment!",
-  "main": "database.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
