@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather:300,700,300italic,700italic|Source+Sans+Pro:900');
+body 
+{
+  font-family: Merriweather;
+  margin: 0;
+  padding: 0;
+  margin-top: 100px;
+  background-image: url(../images/bg.png);
+  text-align: center;
+}
+
+#title
+{
+    text-align: center;
+}
+
+
+form 
+{
+  max-width: 400px;  
+  margin: 50px auto;
+  margin-top: 30px;
+  padding: 30px;  
+  border: 2px solid #ddd;
+  background-color: transparent;
+}
+
+label 
+{
+    display: block;
+    margin-bottom: 5px;  
+}
+  
+input {
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box; 
+    background-color: transparent;
+}
+  
+button
+{
+    margin-top: 10px;
+    border: none;
+    background: green;
+    color: white;
+    padding: 10px 20px;
+}
+
+#oldUser 
+{
+  text-align: center;
+}
