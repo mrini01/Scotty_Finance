@@ -34,7 +34,7 @@ body{
   margin-left: auto;
   margin-right: auto;
   height: 100vh;
-  animation-duration: 3s;
+  animation-duration: 3ms;
   animation-fill-mode: both;
   -webkit-animation-duration: 3s;
   -webkit-animation-fill-mode: both
