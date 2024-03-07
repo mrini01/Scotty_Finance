@@ -2,10 +2,10 @@
 
 body 
 {
-  font-family: Merriweather;
-  margin: 0px;
+  font-family: Arial, sans-serif;
+  margin: 0;
   padding: 0;
-  margin-top: 15px;
+  margin-top: 50px;
   background-image: url(../images/bg.png);
     
 }
@@ -56,10 +56,14 @@ button[type="submit"]
 {
   text-align: center;
 }
+#forgotPass 
+{
+  text-align: center;
+}
 
 label
 {
-  color: black
+  color: #ccc
 }
 
 
