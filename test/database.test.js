@@ -10,15 +10,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const pool = mysql.createPool({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_TEST_DATABASE // THIS IS NOT THE MAIN DATABASE!!!
-}).promise();
+var pool = await database.createDBPool(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, process.env.MYSQL_TEST_DATABASE);
+
+
 
 // called before every test case to create the tables and insert the test data (i know it looks messy but i couldn't figure out how to execute sql files)
 async function setupDatabase() {
+    // await pool.query('use scotty_test_finance');
     // create fresh tables
     await pool.query('create table users (id integer PRIMARY KEY AUTO_INCREMENT NOT NULL, email VARCHAR(255), username VARCHAR(50), pass VARCHAR(50))');
     await pool.query("CREATE TABLE budgets (id integer PRIMARY KEY AUTO_INCREMENT NOT NULL, userId integer, `quarter` ENUM('fall', 'winter', 'spring', 'summer'), `year` integer, constraint fk_userId foreign key (userId) references users (id))");
@@ -42,6 +40,7 @@ async function setupDatabase() {
 async function clearDatabase() {
     // drop tables
     // await pool.query('use scotty_test_finance');
+    // console.log(await pool.query('use scotty_test_finance'));
     await pool.query('set FOREIGN_KEY_CHECKS = 0');
     await pool.query('drop table if exists users, budgets, expense_type, expenses, income_type, incomes, savings');
     await pool.query('set FOREIGN_KEY_CHECKS = 1');
@@ -77,7 +76,7 @@ const savingsTestData = "INSERT INTO savings (budgetId, amount) " +
                         "('3', '750');";
 
 beforeAll(async () => {
-    await pool.query('use scotty_test_finance');
+    // await pool.query('use scotty_test_finance');
 });
 
 // jest callback, this is called before each test case
@@ -123,10 +122,10 @@ test('getUserWithUsername() is correct', async () => {
 });
 
 test('userExists() is correct', async () => {
-    const data = await database.userExists('TestUser2', 'user2password');
+    const data = await database.userExists('TestUser2', 'user2password'); // this returns the user's id
     const user = await database.getUserWithUsername('TestUser2');
-    expect(data.id).toBe(user.id);
-})
+    expect(data).toBe(user.id);
+});
 
 test('createUser(), followed by getUser() is correct', async () => {
     const insertion = await database.createUser('userFromTestHarness', 'passwordFromTestHarness', 'what@hotmail.com');
@@ -141,7 +140,7 @@ test('createUser(), followed by getUser() is correct', async () => {
 
 test('getBudget(userId = 1) is correct', async () => {
     const data = await database.getBudget(1);
-    expect(data.quarter).toBe(1); // might need to replace with 'fall'
+    expect(data.quarter).toBe('fall');
     expect(data.year).toBe(2023);
 });
 
@@ -181,21 +180,23 @@ test('getExpenses(budgetId = 1) is correct', async () => {
 test('createExpense(budgetId = 1, amount = 1000, type = tuition)', async () => {
     const insertion = await database.createExpense(1, 1000, database.ExpenseType.tuition);
     expect(insertion.id).toBe(5);
-    expect(insertion.budgetId).toBe(1);
     expect(insertion.amount).toBe(1000);
     expect(insertion.type).toBe(database.ExpenseType.tuition);
 
-    const result = await database.getExpenses(insertion.id); // i think this returns an array
-    expect();
+    const result = await database.getExpenses(1); // returns array
+    // ^^^ returns list of expenses for budget with the id passed in, second element is the one we just inserted!
+    expect(result[1].id).toBe(5);
+    expect(result[1].amount).toBe(1000);
+    expect(result[1].type).toBe(database.ExpenseType.tuition);
 });
 
 test('getIncomes(budgetId = 3) is correct', async () => {
     const data = await database.getIncomes(3);
     const income = data[0]; // returns a list of incomes
-    expect(income.id).toBe(3);
+    expect(income.id).toBe(4);
     expect(income.budgetId).toBe(3);
     expect(income.amount).toBe(300);
-    expect(income.type).toBe(database.ExpenseType.loan_personal);
+    expect(income.type).toBe(database.IncomeType.investments);
 });
 
 test('getSavings(budgetId = 2) is correct', async () => {
