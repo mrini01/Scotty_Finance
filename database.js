@@ -1,6 +1,9 @@
 // script for communication with the database
-import mysql from 'mysql2'
-import dotenv from 'dotenv'
+import mysql from 'mysql2';
+import dotenv from 'dotenv';
+
+import fs from 'fs';
+import readline from 'readline';
 
 // quarters enum, not an enum bc javascript doesn't support them but you can treat it like one
 // might move this to another file so that it can be used elsewhere
@@ -52,17 +55,24 @@ pool.getConnection((err,connection)=> {
         console.log("database connected successfully!!");
         connection.release();
     }
-    });
+});
+
+// definitely sanitized function to run arbitrary sql queries 👍
+export async function dbRunQuery(sql) {
+    const result = await pool.query(sql);
+    return result;
+}
 
 //  -------- user stuff, account stuff --------------
 /**
  * get a list of all users
- * @returns list of all users, each element is a User object with fields username, pass, and id
+ * @returns list of all users, each element is a User object with fields username, pass, and id; undefined if there are no users
  */
 export async function getUsers() {
     if (!databaseExists) return undefined
     const result = await pool.query("SELECT * FROM users");
     const rows = result[0];
+    if (rows.length == 0) return undefined;
     return rows;
 }
 
@@ -78,7 +88,9 @@ export async function getUser(userId) {
     FROM users
     WHERE id = ?
     `, [userId]);
-    return rows;
+    if (rows.length == 0) return undefined;
+    return rows[0]; // query returns an array by default, so return the first element
+    // return rows;
 }
 
 /**
@@ -93,7 +105,8 @@ export async function getUserWithUsername(username) {
     FROM users
     WHERE username=?
     `, [username]);
-    return rows;
+    if (rows.length == 0) return undefined;
+    return rows[0];
 }
 
 /**
@@ -122,17 +135,17 @@ export async function userExists(username, password) {
 export async function createUser(username, pass, email) {
     if (!databaseExists) return undefined
     const result = await pool.query(`
-    INSERT INTO users (username, pass)
+    INSERT INTO users (username, pass, email)
     VALUES (?, ?, ?)
     `, [username, pass, email]);
 
     console.log(`created user with username ${username}, password ${pass}, and email ${email}, and id ${result[0].insertId}`);
 
     return {
-        'id': result[0].insertId,
-        'username': username,
-        'pass': pass,
-        'email': email
+        id: result[0].insertId,
+        username: username,
+        pass: pass,
+        email: email
     };
 }
 
@@ -156,9 +169,9 @@ export async function removeUser(userId) {
     console.log(`removed user with username ${username} and password ${pass}, and id ${userId}`);
 
     return {
-        'id': userId,
-        'username': item[0].username,
-        'pass': item[0].pass
+        id: userId,
+        username: item[0].username,
+        pass: item[0].pass
     };
 }
 
@@ -177,7 +190,7 @@ export async function getBudget(budgetId) {
     WHERE id=?
     `, [budgetId]);
     if (rows.length == 0) return undefined;
-    return rows;
+    return rows[0];
 }
 
 /**
@@ -195,7 +208,7 @@ export async function getBudgetForUserId(userId, quarter, year) {
     WHERE userId=? AND quarter=? AND year=?
     `, [userId, quarter, year]);
     if (rows.length == 0) return undefined;
-    return rows;
+    return rows[0];
 }
 
 /**
@@ -231,9 +244,9 @@ export async function createBudget(userId, quarter, year)  {
     console.log(`created budget with id ${result[0].insertId} and quarter ${quarter}`);
 
     return {
-        'id': result[0].insertId,
-        'quarter': quarter,
-        'year': year
+        id: result[0].insertId,
+        quarter: quarter,
+        year: year
     };
 }
 
@@ -246,12 +259,12 @@ export async function createBudget(userId, quarter, year)  {
  */
 export async function getExpenses(budgetId) {
     if (!databaseExists) return undefined
-    const expenses = await pool.query(`
+    const [expenses] = await pool.query(`
     SELECT * 
     FROM expenses
     WHERE budgetId = ?
     `, [budgetId]);
-    return expenses[0];
+    return expenses;
 }
 
 /**
@@ -272,9 +285,9 @@ export async function createExpense(budgetId, amount, type) {
     console.log(`created expense with id ${expense[0].insertId}, amount ${amount}, and type ${type}`);
 
     return {
-        'id': expense[0].insertId,
-        'amount': amount,
-        'type': type
+        id: expense[0].insertId,
+        amount: amount,
+        type: type
     };
 }
 
@@ -285,12 +298,12 @@ export async function createExpense(budgetId, amount, type) {
  */
 export async function getIncomes(budgetId) {
     if (!databaseExists) return undefined
-    const incomes = await pool.query(`
+    const [incomes] = await pool.query(`
     SELECT *
     FROM incomes
     WHERE budgetId = ?
     `, [budgetId]);
-    return incomes[0];
+    return incomes;
 }
 
 /**
@@ -311,9 +324,9 @@ export async function createIncome(budgetId, amount, type) {
     console.log(`created income with id ${income[0].insertId}, amount ${amount}, and type ${type}`);
 
     return {
-        'id': income[0].insertId,
-        'amount': amount,
-        'type': type
+        id: income[0].insertId,
+        amount: amount,
+        type: type
     };
 }
 
@@ -334,8 +347,8 @@ export async function createSavings(budgetId, amount) {
     console.log(`created savings with id ${savings[0].insertId}, amount ${amount}`);
 
     return {
-        'id': savings[0].insertId,
-        'amount': amount
+        id: savings[0].insertId,
+        amount: amount
     };
 }
 
@@ -367,8 +380,8 @@ export async function getSavings(budgetId) {
     `, [budgetId]);
 
     return {
-        'id': savings[0].insertId,
-        'amount': amount
+        id: savings[0].insertId,
+        amount: savings[0].amount
     };
 }
 

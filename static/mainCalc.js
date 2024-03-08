@@ -1,22 +1,23 @@
-const Quarter = {
+export const Quarter = {
     Fall: 'fall',
     Winter: 'winter',
     Spring: 'spring',
     Summer: 'summer'
 }
 
-const ExpenseType = {
+export const ExpenseType = {
     unassigned: 0,
 	tuition: 1,
-    transportation: 2,
-    loan_student: 3,
-    loan_personal: 4,
-    food: 5,
-    expense_living: 6,
-    expense_personal: 7
+    textbooks: 2,
+    transportation: 3,
+    loan_student: 4,
+    loan_personal: 5,
+    food: 6,
+    expense_living: 7,
+    expense_personal: 8
 }
 
-const IncomeType = {
+export const IncomeType = {
     unassigned: 0,
     income: 1,
     savings: 2,
