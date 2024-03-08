@@ -122,7 +122,7 @@ export async function userExists(username, password) {
 export async function createUser(username, pass, email) {
     if (!databaseExists) return undefined
     const result = await pool.query(`
-    INSERT INTO users (username, pass)
+    INSERT INTO users (username, pass, email)
     VALUES (?, ?, ?)
     `, [username, pass, email]);
 
