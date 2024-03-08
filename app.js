@@ -3,7 +3,13 @@
 
 import * as database from './database.js';
 import express from 'express';
+import dotenv from 'dotenv';
 
+// .env file import, using this so that database password and host ip address aren't in vcs
+dotenv.config();
+
+// create database pool, for this session
+await database.createDBPool(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, process.env.MYSQL_DATABASE);
 
 import path from 'path';
 import { fileURLToPath } from 'url';

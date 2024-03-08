@@ -33,29 +33,34 @@ export const IncomeType = {
     investments: 3
 }
 
-// .env file import, using this so that database password and host ip address aren't in vcs
-dotenv.config();
-
 let databaseExists = true;
 
-const pool = mysql.createPool({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
-}).promise();
+var pool = undefined;
 
-// check if database exists on localhost, if databaseExists is false, EVERY FUNCTION CALL IN THIS FILE WILL RETURN UNDEFINED
-pool.getConnection((err,connection)=> {
-    if(err) {
-        console.log("AAAAHHHHH");
-        databaseExists = false;
-    }
-    if (connection) {
-        console.log("database connected successfully!!");
-        connection.release();
-    }
-});
+export async function createDBPool(host, user, password, database) {
+    pool = mysql.createPool({
+        host: host,
+        user: user,
+        password: password,
+        database: database
+    }).promise();
+
+    // check if database exists on localhost, if databaseExists is false, EVERY FUNCTION CALL IN THIS FILE WILL RETURN UNDEFINED
+    pool.getConnection((err,connection)=> {
+        if(err) {
+            console.log("AAAAHHHHH");
+            databaseExists = false;
+        }
+        if (connection) {
+            console.log("database connected successfully!!");
+            connection.release();
+        }
+    });
+
+    return pool; // just in case someone AHEM AHEM AHEM the test suite AHEM wants to use the pool
+}
+
+
 
 // definitely sanitized function to run arbitrary sql queries 👍
 export async function dbRunQuery(sql) {
@@ -272,7 +277,7 @@ export async function getExpenses(budgetId) {
  * @param {number} budgetId 
  * @param {number} amount 
  * @param {ExpenseType} type 
- * @returns the Expense that was created (struct contiaining id, amount, and type)
+ * @returns the Expense that was created (object contiaining id, amount, and type)
  */
 export async function createExpense(budgetId, amount, type) {
     if (!databaseExists) return undefined
@@ -294,7 +299,7 @@ export async function createExpense(budgetId, amount, type) {
 /**
  * get a list of all Incomes for budget with id budgetId
  * @param {number} budgetId id of the budget
- * @returns a list of all Incomes for that budget. each Income is a struct with fields id, amount, and type
+ * @returns a list of all Incomes for that budget. each Income is an object with fields id, amount, and type
  */
 export async function getIncomes(budgetId) {
     if (!databaseExists) return undefined
@@ -311,7 +316,7 @@ export async function getIncomes(budgetId) {
  * @param {number} budgetId id of the budget this income is for
  * @param {number} amount money amount for the income
  * @param {IncomeType} type 0: 'unassigned', 1: 'grant', 2: 'loan', 3: 'wages', 4: 'family'
- * @returns struct with id, amount, and type of the Income that was created
+ * @returns object with id, amount, and type of the Income that was created
  */
 export async function createIncome(budgetId, amount, type) {
     if (!databaseExists) return undefined
@@ -373,16 +378,15 @@ export async function updateSavings(budgetId, amount) {
  */
 export async function getSavings(budgetId) {
     if (!databaseExists) return undefined;
-    const savings = await pool.query(`
+    const [savings] = await pool.query(`
     SELECT *
     FROM savings
     WHERE budgetid=?
     `, [budgetId]);
 
-    return {
-        id: savings[0].insertId,
-        amount: savings[0].amount
-    };
+    console.log(savings);
+
+    return savings[0];
 }
 
 // EXPENSE INCOME AND SAVINGS
