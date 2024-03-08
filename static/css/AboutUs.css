@@ -35,19 +35,18 @@ body
 
 /* Team member sections */
 section {
-  background-color: transparent;
+  background-color: #fff;
   padding: 20px;
   width: 200px;
   margin: 20px auto;
-  border: 2px solid #070404; 
+  border: 1px solid #ccc; 
   text-align: center; 
-  position: relative;
 }
  /* Images */ 
 img
 {
   border-radius: 50%; 
-  border: 2px solid #080303;
+  border: 5px solid #0077b6;
 }
  /* Section inner div */
 .inner {

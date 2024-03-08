@@ -125,7 +125,7 @@ test('userExists() is correct', async () => {
     const data = await database.userExists('TestUser2', 'user2password'); // this returns the user's id
     const user = await database.getUserWithUsername('TestUser2');
     expect(data).toBe(user.id);
-})
+});
 
 test('createUser(), followed by getUser() is correct', async () => {
     const insertion = await database.createUser('userFromTestHarness', 'passwordFromTestHarness', 'what@hotmail.com');
@@ -140,7 +140,7 @@ test('createUser(), followed by getUser() is correct', async () => {
 
 test('getBudget(userId = 1) is correct', async () => {
     const data = await database.getBudget(1);
-    expect(data.quarter).toBe('fall'); // might need to replace with 'fall'
+    expect(data.quarter).toBe('fall');
     expect(data.year).toBe(2023);
 });
 
