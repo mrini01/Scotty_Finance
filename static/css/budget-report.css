@@ -12,16 +12,16 @@ body{
 }
 
 #bargraph {
-    width: 700px;
-    height: 700px;
+    width: 600px;
+    height: 600px;
     background-color: transparent;
     color: black;
     margin: auto;
 }
 
 #piegraph {
-    width: 700px;
-    height: 700px;
+    width: 600px;
+    height: 600px;
     background-color: transparent;
     color: white;
     margin: auto;
