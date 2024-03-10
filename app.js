@@ -1,7 +1,7 @@
 import './database.js'
 import express from 'express'
 
-import { getExpenses, getIncomes, getAllBudgetsForUserId } from './database.js';
+import { getExpenses, getIncomes, getAllBudgetsForUserId, Quarter, ExpenseType, IncomeType, getSavings } from './database.js';
 const app = express()
 
 import path from 'path'
@@ -28,12 +28,33 @@ app.get('/budget-report.html', async (req, res) => {
 // Used this to send json file of expenseData
 app.get('/budget', async (req, res) => {
   console.log('Inside budget report route');
-      
-      const budget = await getAllBudgetsForUserId(2);
-      const expenseData = await getExpenses(budget[0].id);
-      const incomeData = await getIncomes(budget[0].id);
-      
-      res.json(expenseData);
+      const user = 2; // manually defined
+      const budget = await getAllBudgetsForUserId(user);
+      const fall = [];
+      const winter = [];
+      const spring = [];
+      const summer = [];
+      const quarters = [fall, winter, spring, summer];
+      const budgetData = [];
+      for (const item of budget) {
+        const { quarter, year } = item;
+        const expenseData = await getExpenses(item.id);
+        for (const expense of expenseData) {
+          const categoryExpense = ExpenseType[expense.type] || 'Unknown'; // Map type to ExpenseType object
+          budgetData.push({ quarter: item.quarter, year: item.year, category: categoryExpense, amount : expense.amount });
+        }
+        const incomeData = await getIncomes(item.id);
+        for (const income of incomeData) {
+          const categoryIncome = IncomeType[income.type] || 'Unknown'; // Map type to ExpenseType object
+          budgetData.push({ quarter: item.quarter, year: item.year, category: categoryIncome, amount : income.amount });
+        }
+        const savingData = await getSavings(item.id);
+        for (const saving of savingData) {
+          const categorySaving = "Saving";
+          budgetData.push({ quarter: item.quarter, year: item.year, category: categorySaving, amount : saving.amount });
+        }
+    } 
+      res.json(budgetData);
 });
 
 const port = 8080

@@ -10,19 +10,24 @@ VALUES ('TestUser1', 'user1password'),
 INSERT INTO budgets (userId, quarter, year)
 VALUES ('1', 'fall', '2023'),
 	   ('2', 'winter', '2024'),
-       ('3', 'spring', '2024');
+       ('3', 'spring', '2024'),
+         ('2', 'winter', '2023');
 	
 INSERT INTO expenses (budgetId, amount, type)
 VALUES ('1', '300', 2),
 	   ('2', '50', 3),
        ('2', '12', 1),
-       ('3', '500', 5);
+       ('3', '500', 5),
+       ('4', '20', 1),
+       ('4', '300', 2),
+       ('4', '450', 3),
+       ('4', '175', 4);
 	
 INSERT INTO incomes (budgetId, amount, type)
 VALUES ('1', '500', 1),
-	   ('1', '400', 3),
-       ('2', '50', 4),
-       ('3', '300', 5);
+	   ('1', '400', 2),
+       ('2', '50', 3),
+       ('3', '300', 3);
 
 INSERT INTO savings (budgetId, amount)
 VALUES ('1', '1000'),

@@ -329,6 +329,24 @@ export async function updateSavings(budgetId, amount) {
     `)
 }
 
+/**
+ * create a Savings for budget
+ * @param {number} budgetId id of the budget
+ * @param {number} amount savings amount
+ * @returns Savings object that contains the id of the savings that was inserted, and the amount
+ */
+export async function getSavings(budgetId) {
+    if (!databaseExists) return undefined;
+    const savings = await pool.query(`
+    SELECT *
+    FROM savings
+    WHERE budgetid=?
+    `, [budgetId]);
+
+    return savings[0];
+}
+
+
 // EXPENSE INCOME AND SAVINGS
 // savings goal
 // 
