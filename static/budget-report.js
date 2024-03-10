@@ -30,6 +30,7 @@ const IncomeType = {
     4: 'family'
 }
 
+// Initialize all of the arrays used for each quarter and year
 let budgetData = [];
 let curYear = 0;
 const fall = [];
@@ -158,15 +159,6 @@ fetch('/budget')
         console.error('Error fetching data:', error);
     })
     .finally(() => {
-        // // Append svg to our #graph variable that we set in budget-report.html
-        // svg = d3.select('#bargraph')
-        // .append('svg')
-        // .attr('width', barGraphWidth + margins.left + margins.right)
-        // .attr('height', barGraphHeight + margins.top + margins.bottom)
-        // // create a group element for the axis labels and text
-        // .append('g')
-        // .attr('transform', 'translate(' + margins.left + "," + margins.top + ")");
-
         curYear = fallCount[0];
         update(fall, fallCount);
 
@@ -246,66 +238,19 @@ function update(budgetData, count) {
 
     // BAR GRAPH CODE
 
-    // // Get the Bar graph element from budget-report.html in order to get the css info
-    // var barGraph = document.getElementById('bargraph')
-    // var barGraphstyle = window.getComputedStyle(barGraph)
-
-    // // Margins of the graph
-    // var margins = {top: 30, bottom: 100, right: 50, left: 50}
-
-    // // Get the graph width and height from css file and adjust to margins
-    // var barGraphWidth = parseInt(barGraphstyle.getPropertyValue('width')) - margins.left - margins.right;
-    // var barGraphHeight = parseInt(barGraphstyle.getPropertyValue('height')) - margins.top - margins.bottom;
-
     var colors = d3.scaleOrdinal()
     .domain(data)
     .range(d3.schemeDark2)
 
-    // // Append svg to our #graph variable that we set in budget-report.html
-    // var svg = d3.select('#bargraph')
-    //     .append('svg')
-    //     .attr('width', barGraphWidth + margins.left + margins.right)
-    //     .attr('height', barGraphHeight + margins.top + margins.bottom)
-    //     // create a group element for the axis labels and text
-    //     .append('g')
-    //     .attr('transform', 'translate(' + margins.left + "," + margins.top + ")");
-
-    // // Create a scale for the x axis on the graph
-    // const x = d3.scaleBand()
-    // .domain(data.map(data => data.category))
-    // .range([0, barGraphWidth])
-    // .padding(0.1);
-
     // set the categories that will be mapped on the x axis
     x.domain(data.map(function(d) {return d.category; }));
-    // Renders the x axis with labels and data increments
-    // xAxis.call(d3.axisBottom(x));
 
- 
-//   xAxis = svg.append("g")
-//   .attr("class", "x axis")
-//   .attr("transform", "translate(0," + barGraphHeight + ")")
-//   .call(d3.axisBottom(x))
-//   .selectAll("text")
-//   .style("text-anchor", "end")
-//   .attr("dx", "-.8em")
-//   .attr("dy", ".15em")
-//   .attr("transform", "rotate(-65)");
-
-
-xAxis.transition().duration(500).call(d3.axisBottom(x))
-    .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", ".15em")
-      .attr("transform", "rotate(-65)");
-
-    // // Create a scale for the y axis on the graph
-    // const y = d3.scaleLinear()
-    // .domain([0, d3.max(data, data => data.amount)])
-    // .range([barGraphHeight, 0]);
-
-
+    xAxis.transition().duration(500).call(d3.axisBottom(x))
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", ".15em")
+        .attr("transform", "rotate(-65)");
 
     // set the y values that will be mapped on the y axis
     y.domain([0, d3.max(data, function(d) { return d.amount; })]);
@@ -315,25 +260,6 @@ xAxis.transition().duration(500).call(d3.axisBottom(x))
     // Renders all the bars on the bar graph
     var bar = svg.selectAll("rect")
         .data(data) // Set data to our budget data array
-
-    // bar.enter()
-    // .append("rect")
-    // .merge(bar)
-    // .transition()
-    // .duration(1000)
-    //     .style("fill", "#24b574") // Fill the bar with greenish color #24b574
-    //     //.style('fill', (d, i) => colors(i))
-    //     .attr("x", data => x(data.category)) // Set x data to the data categories
-    //     .attr("width", x.bandwidth())
-    //     .attr("height", function(d) { return barGraphHeight - y(0); }) // always equal to 0
-    //     .attr("y", function(d) { return y(0); })
-    
-    // bar.transition()
-    //     .duration(1000)
-    //     .attr("x", data => x(data.category))
-    //     .attr("width", x.bandwidth())
-    //     .attr("height", data => barGraphHeight - y(data.amount))
-    //     .attr("y", data => y(data.amount));
 
     bar.enter()
     .append("rect")
@@ -356,21 +282,6 @@ xAxis.transition().duration(500).call(d3.axisBottom(x))
 
 barHover = svg.selectAll("rect")
 
-    // barHover.on('mouseover', function(d, i) {
-    //         d3.select(this)
-    //         .style('fill', "#1b8f5b")
-    //         d3.select("#tooltip")
-    //           .style("left", x)
-    //           .style("top", y)
-    //           .text(`${i.data.category} $${i.data.amount}`)
-    //           .classed("hidden", false);
-    //     })
-    //     .on('mouseout', function(d, i) {
-    //         d3.select(this)
-    //         .style('fill', "#24b574")
-    //         d3.select("#tooltip").classed("hidden", true); // Hide the tooltip
-    //     })
-
 barHover.on('mouseover', function(d, i) {
         d3.select(this)
         .style('fill', "#1b8f5b")
@@ -390,48 +301,16 @@ barHover.on('mouseover', function(d, i) {
         d3.select("#tooltip").classed("hidden", true); // Hide the tooltip
     })
 
-            
-    // bar.transition().duration(1000);
-
     bar.exit()
         .remove()
 
     // PIE CHART CODE
 
-    // // Get the Pie chart element from budget-report.html in order to get the css info
-    // var pieChart = document.getElementById('piegraph')
-    // var pieChartStyle = window.getComputedStyle(pieChart)
-
-    // // Get the pie graph width and height from css file and adjust to margins
-    // var pieChartWidth = parseInt(pieChartStyle.getPropertyValue('width'));
-    // var pieChartHeight = parseInt(pieChartStyle.getPropertyValue('height'));
-
-    // // Get the radius by getting the minimum between width and height and diving by 2
-    // var radius = (Math.min(pieChartWidth, pieChartHeight) / 2) - margins.right;
-    // var offsetX = pieChartWidth * 0.15 ;
-    // var offsetY = 0;
-
-    // // Append svg to our #piegraph variable that we set in budget-report.html
-    // var svgPie = d3.select('#piegraph')
-    //     .append('svg')
-    //     .attr('width', pieChartWidth)
-    //     .attr('height', pieChartHeight)
-    //     .append('g')
-    //     // set position to center of graph
-    //     .attr('transform', `translate(${(pieChartWidth) / 2 - offsetX}, ${pieChartHeight / 2 - offsetY})`);
-
-
     // map the data to to a new variable
     var pieData = data.map(d => ({ category: d.category, amount: d.amount }));
 
     // Define variables for the pie chart slices    
-    var pie = d3.pie()
-    .value(d => d.amount).sort(data.amount)
-    // Sort the data based on the value in ascending order
-    // data.sort(function(a, b) {
-    // return a.amount - b.amount;
-    // });
-       // .sort(function(a, b) { console.log(a) ; return d3.ascending(a.amount, b.amount);} )
+    var pie = d3.pie().value(d => d.amount).sort(data.amount)
     var arcInitial = d3.arc().innerRadius(0).outerRadius(radius*.7)
     var arc = d3.arc().innerRadius(0).outerRadius(radius*.7)
     var hoverArc = d3.arc().innerRadius(0).outerRadius(radius * 0.8)
@@ -440,26 +319,18 @@ barHover.on('mouseover', function(d, i) {
     // set up pie chart
     var temp = svgPie.selectAll('path')
         .data(pie(pieData))
-        // .enter().append('g')
-        // .attr('class', 'arc')
-      //  .attr('transform', `translate(${pieChartWidth/2 - 400})`); 
 
     // Renders slices for pie chart
     temp.enter()
-    // .append('g')
-    // .attr('class', 'arc')
     .append('path')
     .merge(temp)
-    //.style('fill', (d, i) => colors(i))
-    // .style('fill-opacity', 0)
     .style('fill', (d, i) => colors(i))
-    //.attr("d", arc({ startAngle, endAngle: 0 })) //
-    //.attr("fill", (d, i) => d3.schemeCategory10[i]) // Assign colors
     .each(function(d) {
         var endAngle = startAngle + (d.endAngle - d.startAngle);
         d3.select(this)
           .transition()
-          .duration(1000) // Animation duration
+          .duration(1000) // Duration of pie slice animation
+          // Animation from reference at the beginning that creates new slices in a smooth way
           .attrTween("d", function() {
             var interpolateStart = d3.interpolate(0, d.startAngle);
             var interpolateEnd = d3.interpolate(0, d.endAngle);
@@ -511,16 +382,6 @@ barHover.on('mouseover', function(d, i) {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    // // Added labels to pie chart
-    // temp.append('text')
-    //     //.text(d => `${d.data.category} ${((d.data.amount / total) * 100).toFixed(2)}%`)
-    //     .attr('transform', d => `translate(${arc.centroid(d)})`)
-    //     .style('font-size', 14)
-    //     .style('font-weight', 800)
-    //     .style('fill', '#FFFFFF')
-    //     .style('text-anchor', 'middle')
-
-
 var width = pieChartWidth/4;
 
 // Legend
@@ -554,7 +415,4 @@ var legendText = svgPie.selectAll(".legend")
 
 legend.exit()
     .remove();  
-
-// legendText.exit()
-//     .remove();
 }
