@@ -26,12 +26,43 @@ const port = 8080;
 app.use(express.static("static"));
 app.use(express.json());
 
+var isLoggedIn = false;
+var loggedInUser = undefined;
 
-app.post('/budget', (req, res) => {
+
+app.post('/budget', async (req, res) => {
   console.log('in budget post route');
-  databaseDataInput(req.body);
-  // TODO redirect to graph page??
-  res.redirect('/index');
+  // check what the request is for
+  switch (req.body['for']) {
+
+    case 'data-input':
+      await databaseDataInput(req.body);
+      res.redirect('/index');
+      // TODO redirect to graphs page
+      break;
+
+    case 'user-login':
+      const userId = await database.userExists(req.body.username, req.body.password);
+      if (userId) {
+        isLoggedIn = true;
+        loggedInUser = req.body.username;
+        const user = await database.getUser(userId);
+        var data = {
+          successful: true,
+          userId: userId,
+          username: user.username,
+          email: user.email
+        }
+        res.json(data);
+      }
+      else {
+        var data = {
+          successful: false,
+          userId: undefined
+        }
+        res.json(data);
+      }
+  }
 });
 
 // Used this to send html file to display

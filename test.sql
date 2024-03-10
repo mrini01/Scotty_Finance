@@ -1,5 +1,7 @@
 -- create test rows in database
 
+
+
 -- test users
 INSERT INTO users (username, pass, email)
 VALUES ('TestUser1', 'user1password', 'testuser1@testwebsite.com'),
