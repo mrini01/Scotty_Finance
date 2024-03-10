@@ -4,12 +4,15 @@
 import * as database from './database.js';
 import express from 'express';
 import dotenv from 'dotenv';
+import {v4 as uuid} from 'uuid';
+import session from 'express-session';
 
 // .env file import, using this so that database password and host ip address aren't in vcs
 dotenv.config();
+const app = express();
 
 // create database pool, for this session
-await database.createDBPool(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, process.env.MYSQL_DATABASE);
+var pool = await database.createDBPool(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, process.env.MYSQL_DATABASE);
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -18,16 +21,41 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const app = express();
 
 const port = 8080;
 
-app.use(express.static("static"));
+app.use(express.static(path.join(__dirname, 'static')));
 app.use(express.json());
+// app.set('view engine', 'html');
+// const router = express.Router();
 
-var isLoggedIn = false;
-var loggedInUser = undefined;
+// app.set('trust proxy', 1) // trust first proxy
+app.use(session(
+  { name:'SessionCookie',
+    genid: function(req) {
+        console.log('session id created!');
+      return uuid();}, 
+    secret: process.env.SECRET, // not saved in vcs :)
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, expires:60000 }
+  }));
 
+var sessionChecker = (req, res, next) => {    
+  console.log(`Session Checker: ${req.session.id}`);
+  console.log('session: ' + req.session);
+  if (req.session.userId) { 
+      console.log('Found User Session');
+      next();
+  } else {
+      console.log('No User Session Found');
+      res.redirect('/sign-in');
+  }
+};
+
+// router.get('/profile', sessionChecker, async function(req, res, next) {
+//   res.redirect('/profile');
+// });
 
 app.post('/budget', async (req, res) => {
   console.log('in budget post route');
@@ -38,40 +66,61 @@ app.post('/budget', async (req, res) => {
       await databaseDataInput(req.body);
       res.redirect('/index');
       // TODO redirect to graphs page
-      break;
-
-    case 'user-login':
-      const userId = await database.userExists(req.body.username, req.body.password);
-      if (userId) {
-        isLoggedIn = true;
-        loggedInUser = req.body.username;
-        const user = await database.getUser(userId);
-        var data = {
-          successful: true,
-          userId: userId,
-          username: user.username,
-          email: user.email
-        }
-        res.json(data);
-      }
-      else {
-        var data = {
-          successful: false,
-          userId: undefined
-        }
-        res.json(data);
-      }
+      break;      
   }
 });
 
-app.get('/index', (req, res) => {
-  try {
-    res.sendFile(path.join(__dirname, 'static/index.html'));
+app.post('/verify-login', async (req, res) => {
+  const userId = await database.userExists(req.body.username, req.body.password);
+  if (userId) {
+    const user = await database.getUser(userId);
     
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    req.session.userId = userId;
+    console.log(req.session.userId);
+
+    var data = {
+      successful: true,
+    }
+    // res.json(data);
+    console.log('login verified, redirecting to profile (fall.html)');
+    res.redirect('/profile');
   }
+  else {
+    // var data = {
+    //   successful: false,
+    // }
+    console.log('session invalid, redirecting to sign-in page');
+    // res.sendFile('src/sign-in.html', {root: __dirname});
+    return res.sendStatus(401);
+  }
+});
+
+// app.get('/', sessionChecker, (req, res, next) => {
+//   res.sendFile(path.join(__dirname, 'src/index.html'));
+// });
+
+app.get('/profile', function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send fall.html');
+  // res.body.goto = 'fall.html';
+  res.sendFile('fall.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/sign-in', function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send sign-in.html');
+  res.sendFile('sign-in.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+// run every route through the session checker unless it's login
+app.get('/', sessionChecker, function(req, res, next) {
+
 });
 
 app.listen(port, () => {
