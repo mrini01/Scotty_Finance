@@ -13,7 +13,7 @@ body{
 
 #bargraph {
     width: 600px;
-    height: 400px;
+    height: 600px;
     background-color: transparent;
     color: black;
     margin: auto;
@@ -21,10 +21,33 @@ body{
 
 #piegraph {
     width: 600px;
-    height: 400px;
+    height: 600px;
     background-color: transparent;
     color: white;
     margin: auto;
+}
+
+/* Got help online for code relating to displaying the tooltip*/
+/* https://stackoverflow.com/questions/64986774/how-to-keep-and-hide-tooltip-on-mouse-hover-and-mouse-out */
+#tooltip {
+    position: absolute;
+    text-align: center;
+    width: auto;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.hidden {
+    display: none;
+}
+
+#tooltip:not(.hidden) {
+    opacity: 1;
 }
 
 .graphs-container {

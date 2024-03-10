@@ -7,31 +7,63 @@ import readline from 'readline';
 
 // quarters enum, not an enum bc javascript doesn't support them but you can treat it like one
 // might move this to another file so that it can be used elsewhere
+// Quarter
 export const Quarter = {
-    Fall: 'fall',
-    Winter: 'winter',
-    Spring: 'spring',
-    Summer: 'summer'
-}
+    namesToValues: {
+        Fall: 'fall',
+        Winter: 'winter',
+        Spring: 'spring',
+        Summer: 'summer'
+    },
+    valuesToNames: {
+        fall: 'Fall',
+        winter: 'Winter',
+        spring: 'Spring',
+        summer: 'Summer'
+    }
+};
 
+// ExpenseType
 export const ExpenseType = {
-    unassigned: 0,
-	tuition: 1,
-    textbooks: 2,
-    transportation: 3,
-    loan_student: 4,
-    loan_personal: 5,
-    food: 6,
-    expense_living: 7,
-    expense_personal: 8
-}
+    namesToValues: {
+        unassigned: 0,
+        tuition: 1,
+        textbooks: 2,
+        transportation: 3,
+        loan_student: 4,
+        loan_personal: 5,
+        food: 6,
+        expense_living: 7,
+        expense_personal: 8
+    },
+    valuesToNames: {
+        0: 'unassigned',
+        1: 'tuition',
+        2: 'textbooks',
+        3: 'transportation',
+        4: 'loan_student',
+        5: 'loan_personal',
+        6: 'food',
+        7: 'expense_living',
+        8: 'expense_personal'
+    }
+};
 
+// IncomeType
 export const IncomeType = {
-    unassigned: 0,
-    income: 1,
-    savings: 2,
-    investments: 3
-}
+    namesToValues: {
+        unassigned: 0,
+        income: 1,
+        savings: 2,
+        investments: 3
+    },
+    valuesToNames: {
+        0: 'unassigned',
+        1: 'income',
+        2: 'savings',
+        3: 'investments'
+    }
+};
 
 let databaseExists = true;
 
@@ -393,3 +425,5 @@ export async function getSavings(budgetId) {
 // savings goal
 // 
 
+// const user = await getUsers();
+// console.log(user);

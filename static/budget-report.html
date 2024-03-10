@@ -10,16 +10,25 @@
     <h1 id="title">
         Budget Report
     </h1>
- 
-    <div class="stats" id="amount_used_label">Amount Used: $<span id="amount_used_value">0</span></div>
-    <div class="stats" id="remaining_fund_label">Remaining Fund: $<span id="remaining_fund_value">0</span></div>
-    <div class="stats" id="out_of_pocket_label">Out of Pocket: $<span id="out_of_pocket_value">0</span></div>
+
+     <div id="budgetDataContainer"></div>
+
+     <button onclick="setYear('fall'); update(fall, fallCount);">Fall</button>
+     <button onclick="setYear('winter'); update(winter, winterCount);">Winter</button>
+     <button onclick="setYear('spring'); update(spring, springCount);">Spring</button>
+     <button onclick="setYear('summer'); update(summer, summerCount);">Summer</button>
+
+     
+     <div id="buttonContainer"></div>
     
-    
+     <div id="tooltip" class="hidden">Tooltip</div>
+
     <div class="graphs-container">
         <div id="bargraph" class="chart-container"></div>
         <div id="piegraph" class="chart-container"></div>
+    
     </div>
+    <div id="legend"></div>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="budget-report.js"></script>
