@@ -1,10 +1,10 @@
 -- create test rows in database
 
 -- test users
-INSERT INTO users (username, pass)
-VALUES ('TestUser1', 'user1password'),
-	   ('TestUser2', 'user2password'),
-       ('TestUser3', 'user3password');
+INSERT INTO users (username, pass, email)
+VALUES ('TestUser1', 'user1password', 'testuser1@testwebsite.com'),
+	   ('TestUser2', 'user2password', 'testuser2@othertestwebsite.com'),
+       ('TestUser3', 'user3password', 'testuser3@what.com');
 
 -- test budgets, belongs to testuser1, testuser2, testuser3 respectively
 INSERT INTO budgets (userId, quarter, year)
@@ -25,8 +25,8 @@ VALUES ('1', '300', 2),
 	
 INSERT INTO incomes (budgetId, amount, type)
 VALUES ('1', '500', 1),
-	   ('1', '400', 2),
-       ('2', '50', 3),
+	   ('1', '400', 3),
+       ('2', '50', 2),
        ('3', '300', 3);
 
 INSERT INTO savings (budgetId, amount)

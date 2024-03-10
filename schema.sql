@@ -1,4 +1,3 @@
-CREATE DATABASE scotty_finance;
 USE scotty_finance;
 
 CREATE TABLE users (

@@ -87,10 +87,10 @@ fetch('/budget')
         console.error('Error fetching data:', error);
     })
     .finally(() => {
-        curYear = winterCount[0];
-        update(winter, winterCount);
+        curYear = fallCount[0];
+        update(fall, fallCount);
 
-        console.log(winterCount);
+        console.log(fallCount);
 });
 
 function update(budgetData, count) {
@@ -131,7 +131,7 @@ function update(budgetData, count) {
 
     // For each of the data in this quarter, only add data for the specifed year
     for (const item of budgetData) {
-        if(item.year == curYear) {
+        if(item.year == curYear && item.amount > 0) {
             data.push({ category: item.category, amount: item.amount});
             total += item.amount;
             console.log(total);
@@ -157,7 +157,7 @@ function update(budgetData, count) {
     var barGraphstyle = window.getComputedStyle(barGraph)
 
     // Margins of the graph
-    var margins = {top: 30, bottom: 30, right: 30, left: 30}
+    var margins = {top: 30, bottom: 100, right: 50, left: 50}
 
     // Get the graph width and height from css file and adjust to margins
     var barGraphWidth = parseInt(barGraphstyle.getPropertyValue('width')) - margins.left - margins.right;
@@ -182,9 +182,21 @@ function update(budgetData, count) {
     .range([0, barGraphWidth])
     .padding(0.1);
 
+    // set the categories that will be mapped on the x axis
+    x.domain(data.map(function(d) {return d.category; }));
+    // Renders the x axis with labels and data increments
+    // xAxis.call(d3.axisBottom(x));
+
     // Positions the x axis and labels on the graph 
     var xAxis = svg.append("g")
-    .attr("transform", "translate(0," + barGraphHeight + ")");
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + barGraphHeight + ")")
+    .call(d3.axisBottom(x))
+    .selectAll("text")  
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
 
     // Create a scale for the y axis on the graph
     const y = d3.scaleLinear()
@@ -194,11 +206,6 @@ function update(budgetData, count) {
     // Positions the y axis and labels on the graph
     var yAxis = svg.append("g")
     .attr("class", "myYaxis");
-
-    // set the categories that will be mapped on the x axis
-    x.domain(data.map(function(d) {return d.category; }));
-    // Renders the x axis with labels and data increments
-    xAxis.call(d3.axisBottom(x));
 
     // set the y values that will be mapped on the y axis
     y.domain([0, d3.max(data, function(d) { return d.amount; })]);
@@ -218,17 +225,13 @@ function update(budgetData, count) {
         .attr("height", function(d) { return barGraphHeight - y(0); }) // always equal to 0
         .attr("y", function(d) { return y(0); })
     
-    
     var u = svg.selectAll("rect")
         .transition() // and apply changes to all of them
         .duration(1000)
             .attr("y", data => y(data.amount)) // Set y data to the data amounts for each category
             .attr("height", data => barGraphHeight - y(data.amount))
             .delay(function(d,i){console.log(i) ; return(i*100)})
-
-    
-
-
+            
 
 
     // PIE CHART CODE
@@ -242,7 +245,7 @@ function update(budgetData, count) {
     var pieChartHeight = parseInt(pieChartStyle.getPropertyValue('height'));
 
     // Get the radius by getting the minimum between width and height and diving by 2
-    var radius = (Math.min(pieChartWidth, pieChartHeight) / 2);
+    var radius = (Math.min(pieChartWidth, pieChartHeight) / 2) - (Math.max(margins.left + margins.right, margins.bottom + margins.top));
 
     // Append svg to our #piegraph variable that we set in budget-report.html
     var svgPie = d3.select('#piegraph')
@@ -319,7 +322,7 @@ var legendG = temp.selectAll(".legend") // note appending it to mySvg and not sv
     .data(pie(data))
     .enter().append("g")
     .attr("transform", function(d,i){
-        return "translate(" + (pieChartWidth/4 *1.2) + "," + (i * 25) + ")"; // Position the legend to the right of the pie chart
+        return "translate(" + (pieChartWidth/4 *1.2) + "," + (i * 25 - pieChartHeight * .4) +")"; // Position the legend to the right of the pie chart
     })
     .attr("class", "legend");   
 

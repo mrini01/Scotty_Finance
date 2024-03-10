@@ -10,13 +10,13 @@
     <div class="dropdown" style="float: right;">
       <button class="dropbtn">Menu</button>
       <div class="dropdown-content">
-        <a href="#">Sign In</a>
-        <a href="#">Profile</a>
-        <a href="quarter.html">Quarter Reports</a>
+        <a href="sign-in.html">Sign In</a>
+        <a href="fall.html">Profile</a>
+        <a href="index.html">Home</a>
         <a href="AboutUs.html">About Us</a>
       </div>
     </div>
-    <div class="intro">
+    <div class="animatedIntro animatedFadeInUp fadeInUp">
       <img src="images\Scotty Finance-logos_white.png" alt="logo" class="logo" />
       <h3 class="line"><em>Your personal budgeting co-pilot</em></h3>
       <a href="#page"><img src="images/scrollDown.png" alt="down arrow" class="down" /></a></nav></br>
@@ -25,10 +25,19 @@
    <center> 
     <div id="page">
     </br>
-      <p>Hello there! Here are some money moves tips:.......</p></br></br></br><hr style="width: 500px;"></hr></br></br></br>
-      
+      <p> Managing and budgeting money effectively is a crucial skill for students navigating their way through their academic and personal lives. 
+        It involves understanding your income, tracking your expenses, and planning how to use your financial resources wisely. By setting clear 
+        financial goals and creating a realistic budget, students can avoid debt, save for future needs, and make the most out of their limited 
+        resources. </p>
+        
+      <p> Budgeting not only helps in managing daily expenses but also prepares students for financial success after graduation. It teaches valuable 
+        lessons in financial discipline, saving, and investing in one's future. With the right tools and a bit of planning, managing money becomes 
+        less daunting and more of an empowering activity that contributes to overall personal growth and stability.</p>
+      <p>Please use our quick maths calculator down below for a starter, to get a full version Sign-Up with a free account and head on over to your very own profile page!</p>
+     <hr style="width: 700px;"></hr></br>
+       <h3> Quick Maths Calculator </h3>
         <form id="budgetCalculator">
-          <label for="textbooks">Textbook Expense:</label>
+          <label for="textbooks">Personal Expenses:</label>
           <input type="number" id="textbooks" name="textbooks"><br><br>
       
           <label for="transportation">Transportation:</label>
@@ -36,15 +45,21 @@
       
           <label for="tuition">Tuition:</label>
           <input type="number" id="tuition" name="tuition"><br><br>
+
+          <label for="income">Income:</label>
+          <input type="number" id="income" name="income"><br><br>
       
           <label for="savingsGoal">Savings Goal:</label>
           <input type="number" id="savingsGoal" name="savingsGoal"><br><br>
       
           <input type="submit" value="Submit">
        </form>
-       <script src="budgetCalculator.js"></script>
+       <script src="../budgetCalculator.js"></script>
     </div>
+
+    <p>© Scotty Finance | All Rights Reserved</p>
    </center>
+
 
   </body>
 </html>
