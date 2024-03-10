@@ -35,6 +35,7 @@ async function sendData() {
         data[key] = value;
     });
     data['quarter'] = 'fall';
+    data['for'] = 'data-input'; // indicate it's for budget input
     console.log(data);
     console.log(formData);
 
