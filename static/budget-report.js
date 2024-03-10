@@ -2,6 +2,7 @@
 // https://d3-graph-gallery.com/barplot
 // https://d3-graph-gallery.com/graph/pie_annotation.html
 // https://www.youtube.com/watch?v=fX9uiqSok6k
+// https://stackoverflow.com/questions/64986774/how-to-keep-and-hide-tooltip-on-mouse-hover-and-mouse-out for tooltips
 
 
 const Quarter = {
@@ -126,10 +127,14 @@ function update(budgetData, count) {
         buttonContainer.appendChild(button);
     }
 
+    var total = 0;
+
     // For each of the data in this quarter, only add data for the specifed year
     for (const item of budgetData) {
         if(item.year == curYear) {
             data.push({ category: item.category, amount: item.amount});
+            total += item.amount;
+            console.log(total);
         }
     }
 
@@ -221,6 +226,8 @@ function update(budgetData, count) {
             .attr("height", data => barGraphHeight - y(data.amount))
             .delay(function(d,i){console.log(i) ; return(i*100)})
 
+    
+
 
 
 
@@ -235,7 +242,7 @@ function update(budgetData, count) {
     var pieChartHeight = parseInt(pieChartStyle.getPropertyValue('height'));
 
     // Get the radius by getting the minimum between width and height and diving by 2
-    var radius = Math.min(pieChartWidth, pieChartHeight) / 2;
+    var radius = (Math.min(pieChartWidth, pieChartHeight) / 2);
 
     // Append svg to our #piegraph variable that we set in budget-report.html
     var svgPie = d3.select('#piegraph')
@@ -243,7 +250,7 @@ function update(budgetData, count) {
         .attr('width', pieChartWidth)
         .attr('height', pieChartHeight)
         .append('g')
-        .attr('transform', `translate(${pieChartWidth / 2}, ${pieChartHeight / 2})`); // set position to center of graph
+        .attr('transform', `translate(${(pieChartWidth*.8) / 2}, ${pieChartHeight / 2})`); // set position to center of graph
 
     // map the data to to a new variable
     var pieData = data.map(d => ({ category: d.category, amount: d.amount }));
@@ -258,6 +265,7 @@ function update(budgetData, count) {
         .data(pie(pieData))
         .enter().append('g')
         .attr('class', 'arc')
+      //  .attr('transform', `translate(${pieChartWidth/2 - 400})`); 
 
     // Renders slices for pie chart
     temp.append('path')
@@ -272,20 +280,57 @@ function update(budgetData, count) {
             .style('fill-opacity', 1)
             .transition().duration(500)
             .attr('d', hoverArc)
+            const x = d.pageX + "px";
+            const y = d.pageY + "px";
+            d3.select("#tooltip")
+              .style("left", x)
+              .style("top", y)
+              .text(`${i.data.category} $${i.data.amount}`)
+              .classed("hidden", false);
         })
         .on('mouseout', function(d, i) {
             d3.select(this)
             .style('fill-opacity', .8)
             .transition().duration(500)
             .attr('d', arc)
+            d3.select("#tooltip").classed("hidden", true); // Hide the tooltip
         })
+
+
+        var tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
     // Added labels to pie chart
     temp.append('text')
-        .text(d => `${d.data.category} ${d.data.amount}`)
+        //.text(d => `${d.data.category} ${((d.data.amount / total) * 100).toFixed(2)}%`)
         .attr('transform', d => `translate(${arc.centroid(d)})`)
         .style('font-size', 14)
         .style('font-weight', 800)
         .style('fill', '#FFFFFF')
         .style('text-anchor', 'middle')
+
+
+var width = pieChartWidth/4;
+
+// Legend
+var legendG = temp.selectAll(".legend") // note appending it to mySvg and not svg to make positioning easier
+    .data(pie(data))
+    .enter().append("g")
+    .attr("transform", function(d,i){
+        return "translate(" + (pieChartWidth/4 *1.2) + "," + (i * 25) + ")"; // Position the legend to the right of the pie chart
+    })
+    .attr("class", "legend");   
+
+legendG.append("rect") // make a matching color rect
+    .attr("width", 10)
+    .attr("height", 10)
+    .style('fill', (d, i) => colors(i))
+
+legendG.append("text") // add the text
+    .text(d => `${d.data.category} ${((d.data.amount / total) * 100).toFixed(2)}%`)
+    .style("font-size", 14)
+    .attr("y", 10)
+    .attr("x", 11);
 }
