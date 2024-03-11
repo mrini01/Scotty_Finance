@@ -51,7 +51,7 @@ async function sendData() {
         .then(response => {
             if (response.ok) {
                 // return response.json();
-                return data;
+                location.replace(response.url); // loads url returned in the response
             }
             throw new Error('Network response was not ok.');
         })

@@ -75,8 +75,8 @@ app.post('/budget', sessionChecker, async (req, res) => {
       budget = await database.createBudget(req.session.userId, req.body['quarter'], '2024');
       
       await databaseDataInput(req.session.userId, req.body, budget);
-      res.sendStatus(200);
-      // TODO redirect to graphs page
+      // res.sendStatus(200);
+      res.redirect('/home'); // TODO REPLACE THIS WITH REDIRECT TO '/budget-report'
       break;
   }
 });
@@ -190,6 +190,14 @@ app.get('/sign-up', function(req, res, next) {
 // run every route through the session checker unless it's signin/signup
 app.get('/', sessionChecker, function(req, res, next) {
   // woag
+});
+
+app.get('/home', function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  res.sendFile('index.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  });
 });
 
 app.listen(port, () => {
