@@ -1,14 +1,10 @@
 // Add an event listener to the sign-in form
 const form = document.getElementById('sign-in-form');
-form.addEventListener('submit', handleSignIn);
+form.addEventListener('submit', handleSignUp);
 
 // Function to handle sign-in form submission
-async function handleSignIn(event) {
+async function handleSignUp(event) {
   event.preventDefault(); // Prevent the default form submission behavior
-
-  // should be global variables for the user who is signed in
-  var user; 
-  var email;
 
   const formData = new FormData(form);
   let formDataData = {};

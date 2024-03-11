@@ -57,16 +57,27 @@ var sessionChecker = (req, res, next) => {
 //   res.redirect('/profile');
 // });
 
-app.post('/budget', async (req, res) => {
+app.post('/budget', sessionChecker, async (req, res) => {
   console.log('in budget post route');
   // check what the request is for
   switch (req.body['for']) {
 
     case 'data-input':
-      await databaseDataInput(req.body);
-      res.redirect('/index');
+      // check if budget exists for this quarter, if it DOES then return an error message
+      var budget = await database.getBudgetForUserId(req.session.userId, req.body['quarter'], '2024');
+      if (budget) {
+        console.log('budget already exists, returning from post early');
+        console.log('todo return error message :)');
+        res.redirect('/profile');
+        return;
+      }
+      console.log('budget does not exist, creating it');
+      budget = await database.createBudget(req.session.userId, req.body['quarter'], '2024');
+      
+      await databaseDataInput(req.session.userId, req.body, budget);
+      res.sendStatus(200);
       // TODO redirect to graphs page
-      break;      
+      break;
   }
 });
 
@@ -95,11 +106,20 @@ app.post('/verify-login', async (req, res) => {
   }
 });
 
+app.post('/sign-up-call', async function (req, res, next) {
+  const user = await database.createUser(req.body.username, req.body.password, req.body.email);
+  req.session.userId = user.id;
+  console.log('new user created!');
+
+  res.redirect('/profile');
+  console.log('thats it???');
+});
+
 // app.get('/', sessionChecker, (req, res, next) => {
 //   res.sendFile(path.join(__dirname, 'src/index.html'));
 // });
 
-app.get('/profile', function(req, res, next) {
+app.get('/profile', sessionChecker, function(req, res, next) {
   const fileDirectory = path.resolve(__dirname, '.', 'static/');
   console.log('trying to send fall.html');
   // res.body.goto = 'fall.html';
@@ -118,30 +138,31 @@ app.get('/sign-in', function(req, res, next) {
   }); // <--- this doesn't work :)
 });
 
-// run every route through the session checker unless it's login
-app.get('/', sessionChecker, function(req, res, next) {
+app.get('/sign-up', function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send sign-up.html');
+  res.sendFile('sign-up.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  });
+});
 
+// run every route through the session checker unless it's signin/signup
+app.get('/', sessionChecker, function(req, res, next) {
+  // woag
 });
 
 app.listen(port, () => {
   console.log('Scotty Finance is now LIVE at the lovely url http://localhost:8080/ !');
 });
 
-async function databaseDataInput(data) {
+async function databaseDataInput(userId, data, budget) {
   // time for innefficient, poorly designed, bad coding practice code mwahahaha
 
-  // FIXME remove when user getting functions are implemented
-  let user = await database.createUser('woah', 'noway', 'beepboop@gmail.com');
-
-  // verify if budget exists already for this quarter/user
-  let budget = await database.getBudgetForUserId(user.id, 'fall', '2023');
-
-  if (!budget) {
-    budget = await database.createBudget(user.id, 'fall', '2023');
-    console.log('created new budget');
-  }
+  console.log('in databaseDataInput');
 
   for (var i in data) {
+    console.log('iteration ' + i + ' of databaseDataInput');
     switch (i) {
       // expenses
       case 'tuition':
@@ -185,6 +206,9 @@ async function databaseDataInput(data) {
       case 'savingsGoal':
         database.createSavings(budget.id, data[i]);
         break;
+      
+      default:
+        console.log('in default case, that shouldnt happen');
     }
   }
 }
