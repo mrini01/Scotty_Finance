@@ -129,6 +129,46 @@ app.get('/profile', sessionChecker, function(req, res, next) {
   }); // <--- this doesn't work :)
 });
 
+app.get('/profile/fall', sessionChecker, function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send fall.html');
+  // res.body.goto = 'fall.html';
+  res.sendFile('fall.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/profile/winter', sessionChecker, function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send winter.html');
+  // res.body.goto = 'winter.html';
+  res.sendFile('winter.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/profile/spring', sessionChecker, function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send spring.html');
+  // res.body.goto = 'spring.html';
+  res.sendFile('spring.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/profile/summer', sessionChecker, function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send summer.html');
+  // res.body.goto = 'summer.html';
+  res.sendFile('summer.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
 app.get('/sign-in', function(req, res, next) {
   const fileDirectory = path.resolve(__dirname, '.', 'static/');
   console.log('trying to send sign-in.html');
