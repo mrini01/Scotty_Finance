@@ -305,6 +305,26 @@ export async function getExpenses(budgetId) {
 }
 
 /**
+ * get a specific Expense for budget with id budgetId and type
+ * @param {number} budgetId 
+ * @param {ExpenseType} type
+ * @returns Specific Expense or null, struct with fields id, amount, and type
+ */
+export async function getExpenseByBudgetId(budgetId, type) {
+    if (!databaseExists) return undefined
+    const [expenses] = await pool.query(`
+        SELECT *
+        FROM expenses
+        WHERE budgetId = ? AND type = ?
+    `, [budgetId, type]);
+   
+    console.log(expenses);
+    if(expenses.length == 0) return null;
+    return expenses[0];
+
+}
+
+/**
  * create expense for the budget with budgetId, with amount amount and type type
  * @param {number} budgetId 
  * @param {number} amount 
@@ -313,19 +333,42 @@ export async function getExpenses(budgetId) {
  */
 export async function createExpense(budgetId, amount, type) {
     if (!databaseExists) return undefined
-    const expense = await pool.query(`
-    INSERT
-    INTO expenses (budgetId, amount, type)
-    VALUES (?, ?, ?)
-    `, [budgetId, amount, type]);
+    if(amount.length == 0) {
+        amount = "-1";
+    }
+    const exists = await getExpenseByBudgetId(budgetId, type);
 
-    console.log(`created expense with id ${expense[0].insertId}, amount ${amount}, and type ${type}`);
+    if (exists) {
+        // If the expense exists, update it
+        if(amount<0) {amount = exists.amount; }
+        await pool.query(`
+        UPDATE expenses 
+        SET amount = ?, type = ?
+        WHERE id = ?
+        `, [amount, type, exists.id]);
 
-    return {
-        id: expense[0].insertId,
-        amount: amount,
-        type: type
-    };
+        console.log(`Updated expense with id ${exists.id}`);
+        return {
+            id: exists.id,
+            amount: amount,
+            type: type
+        };
+    } else {
+
+        const expense = await pool.query(`
+        INSERT
+        INTO expenses (budgetId, amount, type)
+        VALUES (?, ?, ?)
+        `, [budgetId, amount, type]);
+
+        console.log(`created expense with id ${expense[0].insertId}, amount ${amount}, and type ${type}`);
+
+        return {
+            id: expense[0].insertId,
+            amount: amount,
+            type: type
+        };
+    }
 }
 
 /**
@@ -344,6 +387,25 @@ export async function getIncomes(budgetId) {
 }
 
 /**
+ * get a specific Income for budget with id budgetId and type
+ * @param {number} budgetId 
+ * @param {ExpenseType} type
+ * @returns Specific Income or null, struct with fields id, amount, and type
+ */
+export async function getIncomeByBudgetId(budgetId, type) {
+    if (!databaseExists) return undefined
+    const [incomes] = await pool.query(`
+        SELECT *
+        FROM incomes
+        WHERE budgetId = ? AND type = ?
+    `, [budgetId, type]);
+   
+    console.log(incomes);
+    if(incomes.length == 0) return null;
+    return incomes[0];
+}
+
+/**
  * create Income for budget with id budgetId, with amount amount and type type
  * @param {number} budgetId id of the budget this income is for
  * @param {number} amount money amount for the income
@@ -352,20 +414,64 @@ export async function getIncomes(budgetId) {
  */
 export async function createIncome(budgetId, amount, type) {
     if (!databaseExists) return undefined
-    const income = await pool.query(`
-    INSERT
-    INTO incomes (budgetId, amount, type)
-    VALUES (?, ?, ?)
-    `, [budgetId, amount, type]);
+    if(amount.length == 0) {
+        amount = "-1";
+    }
+    const existsIncome = await getIncomeByBudgetId(budgetId, type);
 
-    console.log(`created income with id ${income[0].insertId}, amount ${amount}, and type ${type}`);
+    if (existsIncome) {
+        // If the expense exists, update it
+        if(amount<0) {amount = existsIncome.amount; }
+        await pool.query(`
+        UPDATE incomes 
+        SET amount = ?, type = ?
+        WHERE id = ?
+        `, [amount, type, existsIncome.id]);
 
-    return {
-        id: income[0].insertId,
-        amount: amount,
-        type: type
-    };
+        console.log(`Updated incomes with id ${existsIncome.id}`);
+        return {
+            id: existsIncome.id,
+            amount: amount,
+            type: type
+        };
+    } else {
+
+        const income = await pool.query(`
+        INSERT
+        INTO incomes (budgetId, amount, type)
+        VALUES (?, ?, ?)
+        `, [budgetId, amount, type]);
+
+        console.log(`created income with id ${income[0].insertId}, amount ${amount}, and type ${type}`);
+
+        return {
+            id: income[0].insertId,
+            amount: amount,
+            type: type
+        };
+    }
 }
+
+
+/**
+ * get a specific Income for budget with id budgetId and type
+ * @param {number} budgetId 
+ * @param {ExpenseType} type
+ * @returns Specific Savings or null, struct with fields id, amount, and type
+ */
+export async function getSavingsByBudgetId(budgetId) {
+    if (!databaseExists) return undefined
+    const [savings] = await pool.query(`
+        SELECT *
+        FROM savings
+        WHERE budgetId = ?
+    `, [budgetId]);
+   
+    console.log(savings);
+    if(savings.length == 0) return null;
+    return savings[0];
+}
+
 
 /**
  * create a Savings for budget
@@ -375,18 +481,40 @@ export async function createIncome(budgetId, amount, type) {
  */
 export async function createSavings(budgetId, amount) {
     if (!databaseExists) return undefined;
-    const savings = await pool.query(`
-    INSERT
-    INTO savings (budgetId, amount)
-    VALUES(?, ?)
-    `, [budgetId, amount]);
+    if(amount.length == 0) {
+        amount = "-1";
+    }
+    const existsSavings = await getSavingsByBudgetId(budgetId);
 
-    console.log(`created savings with id ${savings[0].insertId}, amount ${amount}`);
+    if (existsSavings) {
+        if(amount<0) {amount = existsSavings.amount; }
+        // If the expense exists, update it
+        await pool.query(`
+        UPDATE savings
+        SET amount = ?
+        WHERE id = ?
+        `, [amount, existsSavings.id]);
 
-    return {
-        id: savings[0].insertId,
-        amount: amount
-    };
+        console.log(`Updated incomes with id ${existsSavings.id}`);
+        return {
+            id: existsSavings.id,
+            amount: amount,
+        };
+    } else {
+
+        const savings = await pool.query(`
+        INSERT
+        INTO savings (budgetId, amount)
+        VALUES(?, ?)
+        `, [budgetId, amount]);
+
+        console.log(`created savings with id ${savings[0].insertId}, amount ${amount}`);
+
+        return {
+            id: savings[0].insertId,
+            amount: amount
+        };
+    }
 }
 
 /**

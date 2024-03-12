@@ -69,3 +69,9 @@ create table savings (
     amount integer,
 	constraint fk_budgetId_3 foreign key (budgetId) references budgets (id)
 );
+
+create table sessions (
+	userId integer PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    sessionId VARCHAR(255),
+    foreign key (userId) references users (id)
+);

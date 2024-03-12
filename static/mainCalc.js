@@ -50,10 +50,17 @@ async function sendData() {
         })
         .then(response => {
             if (response.ok) {
-                // return response.json();
-                return data;
+                //console.log("Error submit\n");
+                //throw new Error('Network response was not ok.');
+                //return response.json();
+                location.replace(response.url); // loads url returned in the response
+                
+            } else {
+                // console.log("Its sending to budget report\n");
+                // location.replace(response.url); // loads url returned in the response
+
+                throw new Error('Network response was not ok.');
             }
-            throw new Error('Network response was not ok.');
         })
         .then(data => {
             console.log('Success: ', JSON.stringify(data));
@@ -65,6 +72,7 @@ async function sendData() {
             alert('There was a problem with your submission: ' + error.message);
         });
     } catch (e) {
+        console.log("In catch error statement\n");
         console.error(e);
     }
 }
@@ -111,91 +119,4 @@ function determineQuarter() {
     if(path.includes('spring')) return Quarter.Spring;
     if(path.includes('summer')) return Quarter.Summer;
     return 'Unknown'; 
-}
-
-async function submitBudgetData(data) {
-    // fetch('/api/budget', { // The endpoint URL where the server should handle budget data ??
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    // })
-    // .then(response => {
-    //     if (response.ok) {
-    //         return response.json();
-    //     }
-    //     throw new Error('Network response was not ok.');
-    // })
-    // .then(data => {
-    //     console.log('Success:', data);
-    //     alert('Budget data submitted successfully');
-    // })
-    // .catch((error) => {
-    //     console.error('Error:', error);
-    //     alert('There was a problem with your submission: ' + error.message);
-    // });
-
-
-
-
-    // terrible terrible terrible terrible
-    // send json data to /budget for some reason..
-    
-
-    // FIXME replace '1' with the id of the current user, and '2023' with something else idk
-    let user = await database.createUser('woah', 'noway');
-
-    let budget = await database.getBudgetForUserId(user.id, determineQuarter(), '2023');
-
-    if (!budget) {
-        budget = await database.createBudget(user.id, determineQuarter(), '2023');
-    }
-
-    for (var i in data) {
-        switch (data.key) {
-            // expenses
-            case 'tuition':
-                // we're just scrapping the return value for these functions which isn't really a problem?
-                database.createExpense(budget.id, data.value, database.ExpenseType[1]);
-                break;
-            case 'textbooks':
-                database.createExpense(budget.id, data.value, database.ExpenseType[2]);
-                break;
-            case 'transportation':
-                database.createExpense(budget.id, data.value, database.ExpenseType[3]);
-                break;
-            case 'loan-student':
-                database.createExpense(budget.id, data.value, database.ExpenseType[4]);
-                break;
-            case 'loan-personal':
-                database.createExpense(budget.id, data.value, database.ExpenseType[5]);
-                break;
-            case 'food':
-                database.createExpense(budget.id, data.value, database.ExpenseType[6]);
-                break;
-            case 'expense-living':
-                database.createExpense(budget.id, data.value, database.ExpenseType[7]);
-                break;
-            case 'expense-personal':
-                database.createExpense(budget.id, data.value, database.ExpenseType[8]);
-                break;
-            
-            // incomes
-            case 'income':
-                database.createIncome(budget.id, data.value, database.IncomeType[1]);
-                break;
-            case 'savings':
-                database.createIncome(budget.id, data.value, database.IncomeType[2]);
-                break;
-            case 'investments':
-                database.createIncome(budget.id, data.value, database.IncomeType[3]);
-                break;
-            
-            // savingsGoal
-            case 'savingsGoal':
-                database.createSavings(budget.id, data.value);
-                break;
-        }
-    }
 }
