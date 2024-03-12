@@ -1,5 +1,5 @@
 // test script, creates a brand spankin new database on the mysql server installed on this machine
-import * as database from './../database.js';
+import * as database from '../database.js';
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
 // import jest from 'jest';

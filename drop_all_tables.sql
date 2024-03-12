@@ -4,7 +4,7 @@
 -- run this then schema to get a fresh db
 use scotty_finance;
 set foreign_key_checks = 0;
-drop table if exists users, budgets, expense_type, expenses, income_type, incomes, savings;
+drop table if exists users, budgets, expense_type, expenses, income_type, incomes, savings, sessions;
 -- drop table if exists budgets;
 -- drop table if exists expense_type;
 -- drop table if exists expenses;

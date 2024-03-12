@@ -3,12 +3,15 @@
 import * as database from './database.js';
 import express from 'express';
 import dotenv from 'dotenv';
+import {v4 as uuid} from 'uuid';
+import session from 'express-session';
 
 // .env file import, using this so that database password and host ip address aren't in vcs
 dotenv.config();
+const app = express();
 
 // create database pool, for this session
-await database.createDBPool(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, process.env.MYSQL_DATABASE);
+var pool = await database.createDBPool(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, process.env.MYSQL_DATABASE);
 
 import { getExpenses, getIncomes, getAllBudgetsForUserId, Quarter, ExpenseType, IncomeType, getSavings } from './database.js';
 
@@ -19,49 +22,65 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const app = express()
 
 const port = 8080;
 
-app.use(express.static("static"));
+app.use(express.static(path.join(__dirname, 'static')));
 app.use(express.json());
+// app.set('view engine', 'html');
+// const router = express.Router();
 
-var isLoggedIn = false;
-var loggedInUser = undefined;
+// app.set('trust proxy', 1) // trust first proxy
+app.use(session(
+  { name:'SessionCookie',
+    genid: function(req) {
+        console.log('session id created!');
+      return uuid();}, 
+    secret: process.env.SECRET, // not saved in vcs :)
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, expires:60000 }
+  }));
 
+var sessionChecker = (req, res, next) => {    
+  console.log(`Session Checker: ${req.session.id}`);
+  console.log('session: ' + req.session);
+  if (req.session.userId) { 
+      console.log('Found User Session');
+      next();
+  } else {
+      console.log('No User Session Found');
+      res.redirect('/sign-in');
+  }
+};
 
-app.post('/budget', async (req, res) => {
+// router.get('/profile', sessionChecker, async function(req, res, next) {
+//   res.redirect('/profile');
+// });
+
+app.post('/budget', sessionChecker, async (req, res) => {
   console.log('in budget post route');
   // check what the request is for
   switch (req.body['for']) {
 
     case 'data-input':
-      await databaseDataInput(req.body);
-      res.redirect('/index');
-      // TODO redirect to graphs page
-      break;
+      // check if budget exists for this quarter, if it DOES then return an error message
+      var budget = await database.getBudgetForUserId(req.session.userId, req.body['quarter'], '2024');
+      if (budget) {
+        console.log('budget already exists, returning from post early');
+        console.log('todo return error message :)');
+        // res.redirect('/profile');
+        // return;
+      } else {
+        console.log('budget does not exist, creating it');
+        budget = await database.createBudget(req.session.userId, req.body['quarter'], '2024');
+      }
 
-    case 'user-login':
-      const userId = await database.userExists(req.body.username, req.body.password);
-      if (userId) {
-        isLoggedIn = true;
-        loggedInUser = req.body.username;
-        const user = await database.getUser(userId);
-        var data = {
-          successful: true,
-          userId: userId,
-          username: user.username,
-          email: user.email
-        }
-        res.json(data);
-      }
-      else {
-        var data = {
-          successful: false,
-          userId: undefined
-        }
-        res.json(data);
-      }
+      
+      await databaseDataInput(req.session.userId, req.body, budget);
+      //res.sendStatus(200);
+      res.redirect('/budget-report'); // TODO REPLACE THIS WITH REDIRECT TO '/budget-report'
+      break;
   }
 });
 
@@ -77,22 +96,132 @@ app.get('/budget-report.html', async (req, res) => {
   }
 });
 
-app.get('/index', (req, res) => {
-  try {
-    res.sendFile(path.join(__dirname, 'static/index.html'));
+app.post('/verify-login', async (req, res) => {
+  const userId = await database.userExists(req.body.username, req.body.password);
+  if (userId) {
+    const user = await database.getUser(userId);
     
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Internal Server Error');
+    req.session.userId = userId;
+    console.log(req.session.userId);
+
+    var data = {
+      successful: true,
+    }
+    // res.json(data);
+    console.log('login verified, redirecting to profile (fall.html)');
+    res.redirect('/profile');
   }
+  else {
+    // var data = {
+    //   successful: false,
+    // }
+    console.log('session invalid, redirecting to sign-in page');
+    // res.sendFile('src/sign-in.html', {root: __dirname});
+    return res.sendStatus(401);
+  }
+});
+
+app.post('/sign-up-call', async function (req, res, next) {
+  const user = await database.createUser(req.body.username, req.body.password, req.body.email);
+  req.session.userId = user.id;
+  console.log('new user created!');
+
+  res.redirect('/profile');
+  console.log('thats it???');
+});
+
+// app.get('/', sessionChecker, (req, res, next) => {
+//   res.sendFile(path.join(__dirname, 'src/index.html'));
+// });
+
+app.get('/profile', sessionChecker, function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send fall.html');
+  // res.body.goto = 'fall.html';
+  res.sendFile('fall.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/profile/fall', sessionChecker, function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send fall.html');
+  // res.body.goto = 'fall.html';
+  res.sendFile('fall.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/profile/winter', sessionChecker, function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send winter.html');
+  // res.body.goto = 'winter.html';
+  res.sendFile('winter.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/profile/spring', sessionChecker, function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send spring.html');
+  // res.body.goto = 'spring.html';
+  res.sendFile('spring.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/profile/summer', sessionChecker, function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send summer.html');
+  // res.body.goto = 'summer.html';
+  res.sendFile('summer.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/sign-in', function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send sign-in.html');
+  res.sendFile('sign-in.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  }); // <--- this doesn't work :)
+});
+
+app.get('/sign-up', function(req, res, next) {
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  console.log('trying to send sign-up.html');
+  res.sendFile('sign-up.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err) throw (err);
+  });
+});
+
+app.get('/budget-report', sessionChecker, function(req, res, next) {
+  console.log("In budget-report for app.js")
+  const fileDirectory = path.resolve(__dirname, '.', 'static/');
+  res.sendFile('budget-report.html', {root: fileDirectory}, (err) => {
+    res.end();
+    if (err){ console.log("budget-report throwing an error\n"); throw (err);}
+  });
+});
+
+// run every route through the session checker unless it's signin/signup
+app.get('/', sessionChecker, function(req, res, next) {
+  // woag
 });
 
 
 // Used this to send json file of expenseData
-app.get('/budget', async (req, res) => {
+app.get('/budget-data', sessionChecker, async (req, res) => {
   console.log('Inside budget report route');
       // FIXME remove when user getting functions are implemented
-      let user = await  database.getUserWithUsername("woah");
+      let user = await  database.getUser(req.session.userId);
       console.log(user);
       console.log(user.id);
 
@@ -131,21 +260,17 @@ app.listen(port, () => {
   console.log('Scotty Finance is now LIVE at the lovely url http://localhost:8080/ !');
 });
 
-async function databaseDataInput(data) {
+async function databaseDataInput(userId, data, budget) {
   // time for innefficient, poorly designed, bad coding practice code mwahahaha
 
-  // FIXME remove when user getting functions are implemented
-  let user = await database.createUser('woah', 'noway', 'beepboop@gmail.com');
-
-  // verify if budget exists already for this quarter/user
-  let budget = await database.getBudgetForUserId(user.id, 'fall', '2023');
-
-  if (!budget) {
-    budget = await database.createBudget(user.id, 'fall', '2023');
-    console.log('created new budget');
-  }
+  console.log('in databaseDataInput');
 
   for (var i in data) {
+    console.log('iteration ' + i + ' of databaseDataInput');
+    console.log(typeof i + " " + data[i]);
+    // if(data[i].length == 0) {
+    //   return;
+    // }
     switch (i) {
       // expenses
       case 'tuition':
@@ -189,6 +314,9 @@ async function databaseDataInput(data) {
       case 'savingsGoal':
         database.createSavings(budget.id, data[i]);
         break;
+      
+      default:
+        console.log('in default case, that shouldnt happen');
     }
   }
 }
