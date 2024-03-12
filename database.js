@@ -334,12 +334,13 @@ export async function getExpenseByBudgetId(budgetId, type) {
 export async function createExpense(budgetId, amount, type) {
     if (!databaseExists) return undefined
     if(amount.length == 0) {
-        amount = "0";
+        amount = "-1";
     }
     const exists = await getExpenseByBudgetId(budgetId, type);
 
     if (exists) {
         // If the expense exists, update it
+        if(amount<0) {amount = exists.amount; }
         await pool.query(`
         UPDATE expenses 
         SET amount = ?, type = ?
@@ -414,12 +415,13 @@ export async function getIncomeByBudgetId(budgetId, type) {
 export async function createIncome(budgetId, amount, type) {
     if (!databaseExists) return undefined
     if(amount.length == 0) {
-        amount = "0";
+        amount = "-1";
     }
     const existsIncome = await getIncomeByBudgetId(budgetId, type);
 
     if (existsIncome) {
         // If the expense exists, update it
+        if(amount<0) {amount = existsIncome.amount; }
         await pool.query(`
         UPDATE incomes 
         SET amount = ?, type = ?
@@ -480,11 +482,12 @@ export async function getSavingsByBudgetId(budgetId) {
 export async function createSavings(budgetId, amount) {
     if (!databaseExists) return undefined;
     if(amount.length == 0) {
-        amount = "0";
+        amount = "-1";
     }
     const existsSavings = await getSavingsByBudgetId(budgetId);
 
     if (existsSavings) {
+        if(amount<0) {amount = existsSavings.amount; }
         // If the expense exists, update it
         await pool.query(`
         UPDATE savings

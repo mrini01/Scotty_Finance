@@ -113,7 +113,7 @@ var svgPie = d3.select('#piegraph')
 
 
 
-fetch('/budget') 
+fetch('/budget-data') 
     .then(response => response.json()) 
     .then(data => {
         console.log(data);
