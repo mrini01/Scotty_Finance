@@ -39,7 +39,7 @@ app.use(session(
     secret: process.env.SECRET, // not saved in vcs :)
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, expires:60000 }
+    cookie: { secure: false, expires:5*60*1000 }
   }));
 
 var sessionChecker = (req, res, next) => {    

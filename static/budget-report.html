@@ -5,21 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Budget Report</title>
     <link rel="stylesheet" href="css/budget-report.css"/>
+    <!-- <link rel="stylesheet" href="css/style.css"/> -->
 </head>
 <body>
+    <div class="dropdown" style="float: right;">
+        <button class="dropbtn">Menu</button>
+        <div class="dropdown-content">
+          <a href="sign-in">Sign In</a>
+          <a href="profile">Profile</a>
+          <a href="/">Home</a>
+          <a href="budget-report">Budget Report</a>
+          <a href="AboutUs.html">About Us</a>
+        </div>
+      </div>
+      
     <h1 id="title">
         Budget Report
     </h1>
 
      <div id="budgetDataContainer"></div>
-
+     
      <button onclick="setYear('fall'); update(fall, fallCount);">Fall</button>
      <button onclick="setYear('winter'); update(winter, winterCount);">Winter</button>
      <button onclick="setYear('spring'); update(spring, springCount);">Spring</button>
      <button onclick="setYear('summer'); update(summer, summerCount);">Summer</button>
-
      
      <div id="buttonContainer"></div>
+     
     
      <div id="tooltip" class="hidden">Tooltip</div>
 
