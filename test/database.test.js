@@ -12,8 +12,6 @@ dotenv.config();
 
 var pool = await database.createDBPool(process.env.MYSQL_HOST, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, process.env.MYSQL_TEST_DATABASE);
 
-
-
 // called before every test case to create the tables and insert the test data (i know it looks messy but i couldn't figure out how to execute sql files)
 async function setupDatabase() {
     // await pool.query('use scotty_test_finance');
@@ -145,7 +143,7 @@ test('getBudget(userId = 1) is correct', async () => {
 });
 
 test('createBudget() followed by getBudget() is correct', async () => {
-    let quarter = database.Quarter.Winter;
+    let quarter = database.Quarter.namesToValues.Winter;
     let year = 2025;
     const insertion = await database.createBudget(1, quarter, year);
     let id = insertion.id;
@@ -161,10 +159,10 @@ test('createBudget() followed by getBudget() is correct', async () => {
 });
 
 test('getBudgetForUserId(userId = 2) is correct', async () => {
-    const data = await database.getBudgetForUserId(2, database.Quarter.Winter, 2024);
+    const data = await database.getBudgetForUserId(2, database.Quarter.namesToValues.Winter, 2024);
     expect(data.id).toBe(2); // budget id
     expect(data.userId).toBe(2);
-    expect(data.quarter).toBe(database.Quarter.Winter);
+    expect(data.quarter).toBe(database.Quarter.namesToValues.Winter);
     expect(data.year).toBe(2024);
 });
 
@@ -174,20 +172,20 @@ test('getExpenses(budgetId = 1) is correct', async () => {
     expect(expense.id).toBe(1); // expense id
     expect(expense.budgetId).toBe(1); // budget id
     expect(expense.amount).toBe(300); // amount
-    expect(expense.type).toBe(database.ExpenseType.textbooks);
+    expect(expense.type).toBe(database.ExpenseType.namesToValues.textbooks);
 });
 
 test('createExpense(budgetId = 1, amount = 1000, type = tuition)', async () => {
-    const insertion = await database.createExpense(1, 1000, database.ExpenseType.tuition);
+    const insertion = await database.createExpense(1, 1000, database.ExpenseType.namesToValues.tuition);
     expect(insertion.id).toBe(5);
     expect(insertion.amount).toBe(1000);
-    expect(insertion.type).toBe(database.ExpenseType.tuition);
+    expect(insertion.type).toBe(database.ExpenseType.namesToValues.tuition);
 
     const result = await database.getExpenses(1); // returns array
     // ^^^ returns list of expenses for budget with the id passed in, second element is the one we just inserted!
     expect(result[1].id).toBe(5);
     expect(result[1].amount).toBe(1000);
-    expect(result[1].type).toBe(database.ExpenseType.tuition);
+    expect(result[1].type).toBe(database.ExpenseType.namesToValues.tuition);
 });
 
 test('getIncomes(budgetId = 3) is correct', async () => {
@@ -196,7 +194,7 @@ test('getIncomes(budgetId = 3) is correct', async () => {
     expect(income.id).toBe(4);
     expect(income.budgetId).toBe(3);
     expect(income.amount).toBe(300);
-    expect(income.type).toBe(database.IncomeType.investments);
+    expect(income.type).toBe(database.IncomeType.namesToValues.investments);
 });
 
 test('getSavings(budgetId = 2) is correct', async () => {

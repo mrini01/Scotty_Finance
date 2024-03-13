@@ -202,6 +202,17 @@ app.get('/sign-up', function(req, res, next) {
   });
 });
 
+app.get('/log-out', function(req, res, next) {
+  if (req.session.userId) {
+    req.session.destroy();
+    // res.send("<script>alert('successfully logged out!'); window.location.href = '/'; </script>");
+    res.redirect('/');
+  }
+  else {
+    res.redirect('/sign-in');
+  }
+})
+
 app.get('/budget-report', sessionChecker, function(req, res, next) {
   console.log("In budget-report for app.js")
   const fileDirectory = path.resolve(__dirname, '.', 'static/');
