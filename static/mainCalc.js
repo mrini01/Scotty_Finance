@@ -34,7 +34,7 @@ async function sendData() {
     formData.forEach(function(value, key) {
         data[key] = value;
     });
-    data['quarter'] = 'fall';
+    data['quarter'] = determineQuarter();
     data['for'] = 'data-input'; // indicate it's for budget input
     console.log(data);
     console.log(formData);
@@ -115,6 +115,7 @@ function determineQuarter() {
     // Example implementation 
     const path = window.location.pathname;
     if(path.includes('fall')) return Quarter.Fall;
+    if(path.includes('profile')) return Quarter.Fall;
     if(path.includes('winter')) return Quarter.Winter;
     if(path.includes('spring')) return Quarter.Spring;
     if(path.includes('summer')) return Quarter.Summer;

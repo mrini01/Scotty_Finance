@@ -161,6 +161,7 @@ fetch('/budget-data')
     .finally(() => {
         curYear = fallCount[0];
         update(fall, fallCount);
+        update(fall, fallCount);
 
         console.log(fallCount);
         console.log("Finally Block Executed")
