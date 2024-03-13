@@ -51,3 +51,29 @@ button
 {
   text-align: center;
 }
+label
+{
+  color: black
+}
+
+@keyframes upDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+#title {
+  /* Other styles for the title */
+  animation: upDown 0.5s infinite;
+  animation-play-state: paused;
+}
+
+#title:hover {
+  animation-play-state: running;
+}
+ 
